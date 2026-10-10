@@ -4,6 +4,7 @@ import com.ahmadabdullah.cardholder.data.Bank
 import com.ahmadabdullah.cardholder.data.BankCatalog
 import com.ahmadabdullah.cardholder.data.Card
 import com.ahmadabdullah.cardholder.data.CardNetwork
+import java.util.Calendar
 import java.util.UUID
 
 /**
@@ -22,6 +23,10 @@ data class CardDraft(
     val bdtLimit: String = "",
     val usdLimit: String = "",
     val billingDay: Int? = null,
+    val expiryMonth: Int? = null,
+    val expiryYear: Int? = null,
+    /** Today as year * 12 + month index, so a card that has already expired can't be chosen. */
+    private val today: Int = currentMonthIndex(),
 ) {
     val networkOptions: List<CardNetwork> get() = bank?.networks.orEmpty()
     val tierOptions: List<String> get() = network?.let { bank?.tiersFor(it) }.orEmpty()
@@ -38,6 +43,20 @@ data class CardDraft(
     }
 
     fun withTier(tier: String): CardDraft = copy(tier = tier)
+
+    /** From this year to ten years ahead, the longest a card is issued for. */
+    val expiryYearOptions: List<Int> get() = (today / 12).let { (it..it + 10).toList() }
+
+    /** Every month, except the months of this year that have already passed. */
+    val expiryMonthOptions: List<Int>
+        get() = (1..12).filter { expiryYear == null || isUnexpired(it, expiryYear) }
+
+    fun withExpiryMonth(month: Int): CardDraft = copy(expiryMonth = month)
+
+    fun withExpiryYear(year: Int): CardDraft =
+        copy(expiryYear = year, expiryMonth = expiryMonth?.takeIf { isUnexpired(it, year) })
+
+    private fun isUnexpired(month: Int, year: Int) = year * 12 + month - 1 >= today
 
     val firstNameError: String? get() = nameError(firstName, "First name")
     val lastNameError: String? get() = nameError(lastName, "Last name")
@@ -67,12 +86,16 @@ data class CardDraft(
 
     val billingDayError: String? get() = if (billingDay == null) "Choose the billing date" else null
 
+    val expiryMonthError: String? get() = if (expiryMonth == null) "Choose the month" else null
+    val expiryYearError: String? get() = if (expiryYear == null) "Choose the year" else null
+
     val isComplete: Boolean
         get() = bank != null && network != null && tier != null &&
             listOf(
                 firstNameError, lastNameError, firstFourError, lastFourError,
-                bdtLimitError, usdLimitError, billingDayError,
-            ).all { it == null }
+                bdtLimitError, usdLimitError, billingDayError, expiryMonthError, expiryYearError,
+            ).all { it == null } &&
+            isUnexpired(expiryMonth!!, expiryYear!!)
 
     /** The card this draft describes, or null while anything is missing or invalid. */
     fun toCard(id: String = UUID.randomUUID().toString()): Card? {
@@ -89,12 +112,17 @@ data class CardDraft(
             bdtLimit = bdtLimit.toLong(),
             usdLimit = usdLimit.toLong(),
             billingDay = billingDay!!,
+            expiryMonth = expiryMonth!!,
+            expiryYear = expiryYear!!,
         )
     }
 
     companion object {
         val banks: List<Bank> get() = BankCatalog.banks
         val billingDays: List<Int> = (1..31).toList()
+
+        fun currentMonthIndex(now: Calendar = Calendar.getInstance()): Int =
+            now.get(Calendar.YEAR) * 12 + now.get(Calendar.MONTH)
 
         private fun nameError(name: String, label: String): String? = when {
             name.isBlank() -> "Enter the ${label.lowercase()}"

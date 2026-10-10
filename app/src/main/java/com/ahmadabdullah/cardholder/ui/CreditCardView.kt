@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -45,8 +46,11 @@ private fun tierColors(tier: String): Pair<Color, Color> = when (tier) {
     "Titanium" -> Color(0xFF2E3440) to Color(0xFF636B78)
     "World" -> Color(0xFF0E3B43) to Color(0xFF1F7A7A)
     "Signature" -> Color(0xFF2B1747) to Color(0xFF5B3A8E)
-    "Infinite", "World Elite" -> Color(0xFF0A0A0C) to Color(0xFF34343A)
-    "Green" -> Color(0xFF0F4B33) to Color(0xFF2F8A5F)
+    "Infinite", "World Elite", "Platinum Reserve" -> Color(0xFF0A0A0C) to Color(0xFF34343A)
+    "Blue" -> Color(0xFF0B3C7A) to Color(0xFF3A86D1)
+    "Ultramarine" -> Color(0xFF14146B) to Color(0xFF3B3BC4)
+    "Emerald" -> Color(0xFF0F4B33) to Color(0xFF2F8A5F)
+    "Diamond" -> Color(0xFF3C5A6E) to Color(0xFFA9C4D4)
     else -> Color(0xFF263238) to Color(0xFF546E7A)
 }
 
@@ -92,7 +96,14 @@ fun CreditCardView(card: Card, modifier: Modifier = Modifier, onClick: (() -> Un
                 letterSpacing = 1.sp,
                 maxLines = 1,
             )
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(4.dp))
+            Text(
+                "VALID THRU  ${formatExpiry(card.expiryMonth, card.expiryYear)}",
+                color = Color.White.copy(alpha = 0.8f),
+                fontFamily = FontFamily.Monospace,
+                fontSize = 11.sp,
+            )
+            Spacer(Modifier.height(8.dp))
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
                 Text(
                     card.holderName.uppercase(),
@@ -141,6 +152,41 @@ fun NetworkMark(network: CardNetwork, modifier: Modifier = Modifier) {
                 .padding(horizontal = 6.dp, vertical = 3.dp)
         ) {
             Text("AMEX", color = Color.White, fontWeight = FontWeight.Black, fontSize = 14.sp, letterSpacing = 1.sp)
+        }
+        CardNetwork.DINERS -> Row(modifier, verticalAlignment = Alignment.CenterVertically) {
+            Canvas(Modifier.size(26.dp)) {
+                drawCircle(Color.White, style = Stroke(width = 2.dp.toPx()))
+                drawCircle(Color.White, radius = size.minDimension / 5)
+            }
+            Spacer(Modifier.size(6.dp))
+            Text("Diners Club", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+        }
+        CardNetwork.UNIONPAY -> ColorBlocks(
+            listOf(Color(0xFFE21836), Color(0xFF00447C), Color(0xFF007B84)),
+            listOf("Union", "Pay", ""),
+            modifier,
+        )
+        CardNetwork.JCB -> ColorBlocks(
+            listOf(Color(0xFF0E4C96), Color(0xFFE21836), Color(0xFF007940)),
+            listOf("J", "C", "B"),
+            modifier,
+        )
+    }
+}
+
+/** A row of colored tiles, each carrying a few letters, as the UnionPay and JCB marks are drawn. */
+@Composable
+private fun ColorBlocks(colors: List<Color>, labels: List<String>, modifier: Modifier = Modifier) {
+    Row(modifier, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+        colors.zip(labels).forEach { (color, label) ->
+            Box(
+                Modifier
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(color)
+                    .padding(horizontal = 5.dp, vertical = 3.dp)
+            ) {
+                Text(label.ifEmpty { " " }, color = Color.White, fontWeight = FontWeight.Black, fontSize = 13.sp)
+            }
         }
     }
 }

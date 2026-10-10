@@ -21,8 +21,18 @@ fun formatUsd(amount: Long): String = "$" + String.format(Locale.US, "%,d", amou
 /** The card number with the unknown middle digits masked, grouped like the printed card. */
 fun maskedNumber(card: Card): String = when (card.network) {
     CardNetwork.AMEX -> "${card.firstFour} •••••• •${card.lastFour}"
+    CardNetwork.DINERS -> "${card.firstFour} •••••• ${card.lastFour}"
     else -> "${card.firstFour} •••• •••• ${card.lastFour}"
 }
+
+/** MM/YY as printed on the card, or the placeholder while the month isn't chosen. */
+fun formatExpiry(month: Int, year: Int): String =
+    if (month in 1..12 && year > 0) String.format(Locale.US, "%02d/%02d", month, year % 100) else "MM/YY"
+
+val monthNames = listOf(
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+)
 
 fun ordinal(day: Int): String {
     val suffix = if (day % 100 in 11..13) "th" else when (day % 10) {

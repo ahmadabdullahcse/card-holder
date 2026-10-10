@@ -13,15 +13,19 @@ import org.junit.Test
 class CardDraftTest {
     private val city = BankCatalog.bank("city")!!
     private val brac = BankCatalog.bank("brac")!!
-    private val hsbc = BankCatalog.bank("hsbc")!!
+    private val ab = BankCatalog.bank("ab")!!
 
-    private val complete = CardDraft()
+    /** October 2026. */
+    private val today = 2026 * 12 + 9
+
+    private val complete = CardDraft(today = today)
         .withBank(city)
         .withNetwork(CardNetwork.AMEX)
         .withTier("Gold")
         .copy(
             firstName = "Rahim", lastName = "Uddin", firstFour = "3712", lastFour = "0005",
             bdtLimit = "500000", usdLimit = "2000", billingDay = 15,
+            expiryMonth = 8, expiryYear = 2029,
         )
 
     @Test
@@ -52,7 +56,7 @@ class CardDraftTest {
 
     @Test
     fun aBankWithOneNetworkPicksItAutomatically() {
-        assertEquals(CardNetwork.VISA, CardDraft().withBank(hsbc).network)
+        assertEquals(CardNetwork.MASTERCARD, CardDraft().withBank(ab).network)
     }
 
     @Test
@@ -68,16 +72,42 @@ class CardDraftTest {
     }
 
     @Test
+    fun otherNetworksCheckTheirOwnPrefixes() {
+        assertTrue(CardNetwork.DINERS.acceptsFirstFour("3600"))
+        assertTrue(CardNetwork.DINERS.acceptsFirstFour("3050"))
+        assertFalse(CardNetwork.DINERS.acceptsFirstFour("3700"))
+        assertTrue(CardNetwork.UNIONPAY.acceptsFirstFour("6212"))
+        assertFalse(CardNetwork.UNIONPAY.acceptsFirstFour("6011"))
+        assertTrue(CardNetwork.JCB.acceptsFirstFour("3530"))
+        assertFalse(CardNetwork.JCB.acceptsFirstFour("3590"))
+    }
+
+    @Test
+    fun expiredMonthsCanNotBeChosen() {
+        val thisYear = complete.withExpiryYear(2026)
+        assertEquals((10..12).toList(), thisYear.expiryMonthOptions)
+        assertEquals((1..12).toList(), complete.withExpiryYear(2027).expiryMonthOptions)
+        assertEquals((2026..2036).toList(), complete.expiryYearOptions)
+        // August 2026 has passed, so switching the year to 2026 drops the chosen month.
+        assertNull(thisYear.expiryMonth)
+        assertNull(thisYear.toCard())
+        assertEquals(12, complete.withExpiryMonth(12).withExpiryYear(2026).expiryMonth)
+    }
+
+    @Test
     fun aCompleteDraftBecomesACard() {
         val card = complete.copy(firstName = " Rahim ").toCard("id")!!
         assertEquals("Rahim", card.firstName)
         assertEquals(500_000L, card.bdtLimit)
         assertEquals("city", card.bankId)
+        assertEquals(8, card.expiryMonth)
+        assertEquals(2029, card.expiryYear)
     }
 
     @Test
     fun missingOrBadFieldsBlockSaving() {
         assertNull(complete.copy(billingDay = null).toCard())
+        assertNull(complete.copy(expiryMonth = null).toCard())
         assertNull(complete.copy(bdtLimit = "0").toCard())
         assertNull(complete.copy(lastFour = "12").toCard())
         assertNull(complete.copy(lastName = "R2D2").toCard())

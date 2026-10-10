@@ -45,7 +45,9 @@ import com.ahmadabdullah.cardholder.data.CardNetwork
 import com.ahmadabdullah.cardholder.ui.CreditCardView
 import com.ahmadabdullah.cardholder.ui.formatBdt
 import com.ahmadabdullah.cardholder.ui.formatUsd
+import com.ahmadabdullah.cardholder.ui.monthNames
 import com.ahmadabdullah.cardholder.ui.ordinal
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -134,6 +136,26 @@ fun AddCardScreen(onBack: () -> Unit, onSave: (Card) -> Unit) {
                         modifier = Modifier.weight(1f),
                     )
                 }
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Dropdown(
+                        label = "Expiry month",
+                        options = draft.expiryMonthOptions,
+                        selected = draft.expiryMonth,
+                        optionLabel = { String.format(Locale.US, "%02d · %s", it, monthNames[it - 1]) },
+                        onSelect = { draft = draft.withExpiryMonth(it) },
+                        error = error(draft.expiryMonthError, false),
+                        modifier = Modifier.weight(1f),
+                    )
+                    Dropdown(
+                        label = "Expiry year",
+                        options = draft.expiryYearOptions,
+                        selected = draft.expiryYear,
+                        optionLabel = { it.toString() },
+                        onSelect = { draft = draft.withExpiryYear(it) },
+                        error = error(draft.expiryYearError, false),
+                        modifier = Modifier.weight(1f),
+                    )
+                }
                 Text(
                     "Only the first and last 4 digits are kept. Never enter your full card number, CVV or PIN.",
                     style = MaterialTheme.typography.bodySmall,
@@ -190,6 +212,8 @@ private fun CardDraft.preview(): Card? {
         bdtLimit = 0,
         usdLimit = 0,
         billingDay = 1,
+        expiryMonth = expiryMonth ?: 0,
+        expiryYear = expiryYear ?: 0,
     )
 }
 
@@ -205,11 +229,13 @@ private fun <T> Dropdown(
     enabled: Boolean = true,
     hint: String? = null,
     error: String? = null,
+    modifier: Modifier = Modifier,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     ExposedDropdownMenuBox(
         expanded = expanded && enabled,
         onExpandedChange = { if (enabled) expanded = it },
+        modifier = modifier,
     ) {
         OutlinedTextField(
             value = selected?.let(optionLabel).orEmpty(),
@@ -289,6 +315,7 @@ private val DraftSaver = Saver<CardDraft, List<Any?>>(
         listOf(
             it.bank?.id, it.network?.name, it.tier, it.firstName, it.lastName,
             it.firstFour, it.lastFour, it.bdtLimit, it.usdLimit, it.billingDay,
+            it.expiryMonth, it.expiryYear,
         )
     },
     restore = {
@@ -303,6 +330,8 @@ private val DraftSaver = Saver<CardDraft, List<Any?>>(
             bdtLimit = it[7] as String,
             usdLimit = it[8] as String,
             billingDay = it[9] as Int?,
+            expiryMonth = it[10] as Int?,
+            expiryYear = it[11] as Int?,
         )
     },
 )

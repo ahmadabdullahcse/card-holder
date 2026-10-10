@@ -37,6 +37,7 @@ import com.ahmadabdullah.cardholder.ui.CreditCardView
 import com.ahmadabdullah.cardholder.ui.formatBdt
 import com.ahmadabdullah.cardholder.ui.formatShortDate
 import com.ahmadabdullah.cardholder.ui.formatUsd
+import com.ahmadabdullah.cardholder.ui.monthNames
 import com.ahmadabdullah.cardholder.ui.nextBillingDate
 import com.ahmadabdullah.cardholder.ui.ordinal
 
@@ -78,9 +79,11 @@ fun CardDetailScreen(card: Card, onBack: () -> Unit, onDelete: () -> Unit) {
                     HorizontalDivider()
                     DetailRow("Card holder", card.holderName)
                     HorizontalDivider()
+                    DetailRow("Expires", "${monthNames[card.expiryMonth - 1]} ${card.expiryYear}")
+                    HorizontalDivider()
                     DetailRow("BDT limit", formatBdt(card.bdtLimit))
                     HorizontalDivider()
-                    DetailRow("USD limit", formatUsd(card.usdLimit))
+                    DetailRow("USD limit", if (card.usdLimit > 0) formatUsd(card.usdLimit) else "None")
                     HorizontalDivider()
                     DetailRow(
                         "Billing date",

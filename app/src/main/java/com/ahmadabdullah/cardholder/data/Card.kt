@@ -15,6 +15,8 @@ data class Card(
     val bdtLimit: Long,
     val usdLimit: Long,
     val billingDay: Int,
+    val expiryMonth: Int,
+    val expiryYear: Int,
 ) {
     val bankName: String get() = BankCatalog.bank(bankId)?.name ?: bankId
     val holderName: String get() = "$firstName $lastName"
@@ -31,6 +33,8 @@ data class Card(
         .put("bdtLimit", bdtLimit)
         .put("usdLimit", usdLimit)
         .put("billingDay", billingDay)
+        .put("expiryMonth", expiryMonth)
+        .put("expiryYear", expiryYear)
 
     companion object {
         fun fromJson(json: JSONObject) = Card(
@@ -45,6 +49,8 @@ data class Card(
             bdtLimit = json.getLong("bdtLimit"),
             usdLimit = json.getLong("usdLimit"),
             billingDay = json.getInt("billingDay"),
+            expiryMonth = json.getInt("expiryMonth"),
+            expiryYear = json.getInt("expiryYear"),
         )
     }
 }
