@@ -84,7 +84,7 @@ object BankCatalog {
         // citybankplc.com/cards
         bank(
             "city", "City Bank",
-            CardNetwork.VISA to listOf(PLATINUM),
+            CardNetwork.VISA to listOf(PLATINUM, INFINITE),
             CardNetwork.MASTERCARD to listOf(WORLD_ELITE),
             CardNetwork.AMEX to listOf(BLUE, GOLD, PLATINUM, PLATINUM_RESERVE, ULTRAMARINE),
         ),

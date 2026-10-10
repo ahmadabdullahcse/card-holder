@@ -50,7 +50,7 @@ The first release covers credit cards issued in **Bangladesh**.
 | AB Bank | | Gold, Titanium, World | | | | |
 | Bank Asia | Gold, Platinum, Signature | Gold, Titanium, World Elite | | | | |
 | BRAC Bank | Classic, Gold, Platinum, Signature, Infinite | Classic, Gold, Platinum, Titanium, World | | Emerald | | |
-| City Bank | Platinum | World Elite | Blue, Gold, Platinum, Platinum Reserve, Ultramarine | | | |
+| City Bank | Platinum, Infinite | World Elite | Blue, Gold, Platinum, Platinum Reserve, Ultramarine | | | |
 | Dhaka Bank | Gold, Platinum, Signature | Titanium, World | | | | |
 | Dutch-Bangla Bank | Gold, Platinum, Signature | Gold, Titanium, World | | | | |
 | Eastern Bank | Classic, Gold, Platinum, Signature, Infinite | Titanium, World, World Elite | | Standard | Platinum | |
