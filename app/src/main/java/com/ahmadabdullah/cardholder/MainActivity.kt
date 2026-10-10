@@ -2,16 +2,22 @@ package com.ahmadabdullah.cardholder
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ahmadabdullah.cardholder.ui.WalletViewModel
+import com.ahmadabdullah.cardholder.ui.addcard.AddCardScreen
+import com.ahmadabdullah.cardholder.ui.detail.CardDetailScreen
 import com.ahmadabdullah.cardholder.ui.theme.CardHolderTheme
+import com.ahmadabdullah.cardholder.ui.wallet.WalletScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,29 +25,49 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CardHolderTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Card holder",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                CardHolderApp()
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+private const val ADD_CARD = "add"
 
-@Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    CardHolderTheme {
-        Greeting("Card holder")
+private fun CardHolderApp(viewModel: WalletViewModel = viewModel()) {
+    val cards by viewModel.cards.collectAsStateWithLifecycle()
+    // The wallet when null; otherwise the add-card form or the id of the card being viewed.
+    var screen by rememberSaveable { mutableStateOf<String?>(null) }
+
+    BackHandler(enabled = screen != null) { screen = null }
+
+    when (val current = screen) {
+        null -> WalletScreen(
+            cards = cards,
+            onAddCard = { screen = ADD_CARD },
+            onOpenCard = { screen = it.id },
+        )
+        ADD_CARD -> AddCardScreen(
+            onBack = { screen = null },
+            onSave = { card ->
+                viewModel.add(card)
+                screen = null
+            },
+        )
+        else -> {
+            val card = cards?.firstOrNull { it.id == current }
+            if (card == null) {
+                LaunchedEffect(cards) { if (cards != null) screen = null }
+            } else {
+                CardDetailScreen(
+                    card = card,
+                    onBack = { screen = null },
+                    onDelete = {
+                        viewModel.delete(card.id)
+                        screen = null
+                    },
+                )
+            }
+        }
     }
 }
