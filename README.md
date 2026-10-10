@@ -43,38 +43,7 @@ The first release covers credit cards issued in **Bangladesh**.
 
 ## Supported banks
 
-21 banks, gathered from each bank's own credit card pages in October 2026.
-
-| Bank | Visa | Mastercard | Amex | Diners Club | UnionPay | JCB |
-|---|---|---|---|---|---|---|
-| AB Bank | | Gold, Titanium, World | | | | |
-| Bank Asia | Gold, Platinum, Signature | Gold, Titanium, World Elite | | | | |
-| BRAC Bank | Classic, Gold, Platinum, Signature, Infinite | Classic, Gold, Platinum, Titanium, World | | Emerald | | |
-| City Bank | Platinum, Infinite | World Elite | Blue, Gold, Platinum, Platinum Reserve, Ultramarine | | | |
-| Dhaka Bank | Gold, Platinum, Signature | Titanium, World | | | | |
-| Dutch-Bangla Bank | Gold, Platinum, Signature | Gold, Titanium, World | | | | |
-| Eastern Bank | Classic, Gold, Platinum, Signature, Infinite | Titanium, World, World Elite | | Standard | Platinum | |
-| IFIC Bank | Gold, Platinum | | | | | |
-| Islami Bank Bangladesh | Gold, Platinum, Signature | Gold, Platinum, World | | | Gold, Platinum | |
-| Jamuna Bank | Classic, Gold, Platinum, Signature | | | | | |
-| LankaBangla Finance | Classic, Gold, Platinum | Classic, Gold, Titanium | | | | |
-| Mercantile Bank | Classic, Gold, Platinum, Signature | Titanium, World | | | | |
-| Mutual Trust Bank | Classic, Gold, Platinum, Signature | Classic, Gold, Titanium, World | | | Platinum, Diamond | |
-| NCC Bank | Classic, Gold, Platinum, Signature | Titanium | | | | |
-| ONE Bank | Classic, Gold, Platinum, Signature | | | | | |
-| Prime Bank | Gold, Platinum, Signature | Platinum, World | | | | Gold, Platinum |
-| Pubali Bank | Classic, Gold, Platinum | Titanium, World | | | | |
-| Southeast Bank | Classic, Gold, Platinum, Signature | Standard, Titanium, World | | | | |
-| Standard Chartered | Classic, Gold, Platinum, Signature | Titanium | | | | |
-| Trust Bank | Classic, Gold, Platinum, Signature | | | | Platinum | |
-| United Commercial Bank | Classic, Gold, Platinum, Signature | Classic, Gold, Platinum, World | | | | |
-
-Notes on the list:
-
-- **Co-branded and Islamic cards** are listed under the tier they are issued on. For example, an EBL Daraz card is a Visa, and a Dhaka Bank Tayyebah card is a Mastercard Titanium.
-- **Corporate cards** are not included.
-- **HSBC** is not listed, because it closed its retail banking in Bangladesh in 2025–26.
-- **Banks change their cards.** If yours is missing, see [Updating the bank list](#updating-the-bank-list).
+21 Bangladeshi banks and their credit cards on Visa, Mastercard, American Express, Diners Club, UnionPay and JCB. The list was taken from each bank's own credit card pages in October 2026 and lives in [`BankCatalog.kt`](app/src/main/java/com/ahmadabdullah/cardholder/data/BankCatalog.kt). If your card is missing, see [Updating the bank list](#updating-the-bank-list).
 
 ## Privacy
 
@@ -143,3 +112,7 @@ To add or change a bank:
 2. Add or edit its entry. Keep the list in alphabetical order.
 3. If you added a tier that has no color yet, give it one in `tierColors` in `CreditCardView.kt`.
 4. Run `./gradlew testDebugUnitTest`. One of the tests checks that every bank lists at least one tier for each network it offers.
+
+## License
+
+Released under the [MIT License](LICENSE).
