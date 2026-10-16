@@ -25,12 +25,15 @@ data class PayBy(
          */
         const val DEFAULT_USD_CONVERSION_DAYS = 2
 
-        fun of(bill: BillMessage, usdConversionDays: Int = DEFAULT_USD_CONVERSION_DAYS): PayBy {
-            val lastOpenDay = BankCalendar.lastOpenDayOnOrBefore(bill.dueDate)
+        fun of(dueDate: LocalDate, totalDue: Due, usdConversionDays: Int = DEFAULT_USD_CONVERSION_DAYS): PayBy {
+            val lastOpenDay = BankCalendar.lastOpenDayOnOrBefore(dueDate)
             return PayBy(
-                bdt = lastOpenDay.takeIf { bill.totalDue.bdt > 0 },
-                usd = BankCalendar.openDaysBefore(lastOpenDay, usdConversionDays).takeIf { bill.totalDue.usd > 0 },
+                bdt = lastOpenDay.takeIf { totalDue.bdt > 0 },
+                usd = BankCalendar.openDaysBefore(lastOpenDay, usdConversionDays).takeIf { totalDue.usd > 0 },
             )
         }
+
+        fun of(bill: BillMessage, usdConversionDays: Int = DEFAULT_USD_CONVERSION_DAYS): PayBy =
+            of(bill.dueDate, bill.totalDue, usdConversionDays)
     }
 }

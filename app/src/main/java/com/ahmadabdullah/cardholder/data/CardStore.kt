@@ -11,8 +11,11 @@ import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import java.io.File
 
-/** Keeps the cards in a JSON file in the app's private storage. */
-class CardStore(context: Context) {
+/**
+ * Keeps the cards in a JSON file in the app's private storage. There is one per app, shared by
+ * the screens and the bill reader, so each sees the other's changes.
+ */
+class CardStore private constructor(context: Context) {
     private val file = File(context.filesDir, FILE_NAME)
     private val lock = Mutex()
     private val _cards = MutableStateFlow<List<Card>?>(null)
@@ -50,5 +53,10 @@ class CardStore(context: Context) {
 
     companion object {
         const val FILE_NAME = "cards.json"
+
+        @Volatile private var instance: CardStore? = null
+
+        fun get(context: Context): CardStore =
+            instance ?: synchronized(this) { instance ?: CardStore(context.applicationContext).also { instance = it } }
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Used before Android 12. Saved cards stay on this phone and are left out of backups. -->
+<!-- Used before Android 12. Saved cards and bills stay on this phone and are left out of backups. -->
 <full-backup-content>
     <exclude domain="file" path="cards.json" />
+    <exclude domain="file" path="bills.json" />
 </full-backup-content>
