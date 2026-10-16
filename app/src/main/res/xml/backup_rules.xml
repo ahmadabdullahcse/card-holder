@@ -3,4 +3,5 @@
 <full-backup-content>
     <exclude domain="file" path="cards.json" />
     <exclude domain="file" path="bills.json" />
+    <exclude domain="file" path="unmatched_bills.json" />
 </full-backup-content>

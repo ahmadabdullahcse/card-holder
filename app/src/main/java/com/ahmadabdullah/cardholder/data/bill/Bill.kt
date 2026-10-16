@@ -56,3 +56,39 @@ data class Bill(
         }
     }
 }
+
+/**
+ * A bill for a card the user hasn't saved yet. It's kept so that the user can be offered to
+ * add the card, and is moved onto the card once they do.
+ */
+data class UnmatchedBill(
+    val message: BillMessage,
+    /** The bank, when the message or its sender names one. */
+    val bankId: String?,
+) {
+    val id: String get() = "${message.card.prefix}*${message.card.suffix}:${message.dueDate}"
+
+    fun toJson(): JSONObject = JSONObject()
+        .put("prefix", message.card.prefix)
+        .put("suffix", message.card.suffix)
+        .put("statementMonth", message.statementMonth?.toString() ?: JSONObject.NULL)
+        .put("totalDueBdt", message.totalDue.bdt)
+        .put("totalDueUsd", message.totalDue.usd)
+        .put("minDueBdt", message.minDue.bdt)
+        .put("minDueUsd", message.minDue.usd)
+        .put("dueDate", message.dueDate.toString())
+        .put("bankId", bankId ?: JSONObject.NULL)
+
+    companion object {
+        fun fromJson(json: JSONObject) = UnmatchedBill(
+            message = BillMessage(
+                card = CardDigits(json.getString("prefix"), json.getString("suffix")),
+                statementMonth = if (json.isNull("statementMonth")) null else YearMonth.parse(json.getString("statementMonth")),
+                totalDue = Due(json.getLong("totalDueBdt"), json.getLong("totalDueUsd")),
+                minDue = Due(json.getLong("minDueBdt"), json.getLong("minDueUsd")),
+                dueDate = LocalDate.parse(json.getString("dueDate")),
+            ),
+            bankId = if (json.isNull("bankId")) null else json.getString("bankId"),
+        )
+    }
+}

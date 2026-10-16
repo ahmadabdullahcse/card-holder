@@ -1,6 +1,7 @@
 package com.ahmadabdullah.cardholder.data.bill
 
 import android.content.Context
+import com.ahmadabdullah.cardholder.data.Card
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +20,8 @@ class BillStore private constructor(context: Context) {
     private val file = File(context.filesDir, FILE_NAME)
     private val lock = Mutex()
     private val _bills = MutableStateFlow<List<Bill>?>(null)
+    private val unmatchedFile = File(context.filesDir, UNMATCHED_FILE_NAME)
+    private val unmatchedLock = Mutex()
 
     /** The saved bills, or null until they have been read from disk. */
     val bills: StateFlow<List<Bill>?> = _bills.asStateFlow()
@@ -49,6 +52,38 @@ class BillStore private constructor(context: Context) {
     suspend fun recordReminders(id: String, keys: Collection<String>) =
         change(id) { it.copy(remindersSent = it.remindersSent + keys) }
 
+    /**
+     * Keeps a bill for a card that isn't saved yet.
+     *
+     * @return true if this bill wasn't kept before.
+     */
+    suspend fun saveUnmatched(bill: UnmatchedBill): Boolean = unmatchedLock.withLock {
+        val kept = readUnmatched()
+        if (kept.any { it.id == bill.id }) return false
+        writeUnmatched(kept + bill)
+        true
+    }
+
+    suspend fun unmatched(id: String): UnmatchedBill? = unmatchedLock.withLock { readUnmatched().firstOrNull { it.id == id } }
+
+    /**
+     * Moves the bills that were waiting for [card] onto it, now that it's saved.
+     *
+     * @return true if there were any.
+     */
+    suspend fun claimUnmatched(card: Card): Boolean {
+        val claimed = unmatchedLock.withLock {
+            val kept = readUnmatched()
+            val (mine, others) = kept.partition {
+                it.message.card.matches(card) && (it.bankId == null || it.bankId == card.bankId)
+            }
+            if (mine.isNotEmpty()) writeUnmatched(others)
+            mine
+        }
+        claimed.forEach { save(Bill.from(it.message, card.id)) }
+        return claimed.isNotEmpty()
+    }
+
     suspend fun deleteForCard(cardId: String) = update { bills -> bills.filterNot { it.cardId == cardId } }
 
     private suspend fun change(id: String, change: (Bill) -> Bill) =
@@ -74,8 +109,23 @@ class BillStore private constructor(context: Context) {
         temp.renameTo(file)
     }
 
+    private suspend fun readUnmatched(): List<UnmatchedBill> = withContext(Dispatchers.IO) {
+        if (!unmatchedFile.exists()) return@withContext emptyList()
+        val array = JSONArray(unmatchedFile.readText())
+        List(array.length()) { UnmatchedBill.fromJson(array.getJSONObject(it)) }
+    }
+
+    private suspend fun writeUnmatched(bills: List<UnmatchedBill>) = withContext(Dispatchers.IO) {
+        val array = JSONArray()
+        bills.forEach { array.put(it.toJson()) }
+        val temp = File(unmatchedFile.parentFile, "$UNMATCHED_FILE_NAME.tmp")
+        temp.writeText(array.toString())
+        temp.renameTo(unmatchedFile)
+    }
+
     companion object {
         const val FILE_NAME = "bills.json"
+        const val UNMATCHED_FILE_NAME = "unmatched_bills.json"
 
         @Volatile private var instance: BillStore? = null
 

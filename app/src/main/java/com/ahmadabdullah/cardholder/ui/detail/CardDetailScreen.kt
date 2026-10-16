@@ -13,6 +13,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.ahmadabdullah.cardholder.data.Card
 import com.ahmadabdullah.cardholder.data.bill.Bill
 import com.ahmadabdullah.cardholder.data.bill.Due
+import com.ahmadabdullah.cardholder.reminders.REMINDER_DAYS_TEXT
 import com.ahmadabdullah.cardholder.ui.CreditCardView
 import com.ahmadabdullah.cardholder.ui.formatBdt
 import com.ahmadabdullah.cardholder.ui.formatBdtExact
@@ -56,6 +58,7 @@ fun CardDetailScreen(
     card: Card,
     bill: Bill?,
     onBack: () -> Unit,
+    onEdit: () -> Unit,
     onDelete: () -> Unit,
     onSetPaid: (Bill, Boolean) -> Unit,
 ) {
@@ -71,6 +74,9 @@ fun CardDetailScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = onEdit) {
+                        Icon(Icons.Filled.Edit, contentDescription = "Edit card")
+                    }
                     IconButton(onClick = { confirmingDelete = true }) {
                         Icon(Icons.Filled.Delete, contentDescription = "Remove card")
                     }
@@ -162,7 +168,7 @@ private fun BillSection(bill: Bill, onSetPaid: (Boolean) -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                if (bill.paid) "Paid. No more reminders for this bill." else "Reminders come 7, 5, 3, 2 and 1 days before.",
+                if (bill.paid) "Paid. No more reminders for this bill." else "Reminders come $REMINDER_DAYS_TEXT.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.weight(1f),

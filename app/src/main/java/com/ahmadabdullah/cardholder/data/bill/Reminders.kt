@@ -1,5 +1,6 @@
 package com.ahmadabdullah.cardholder.data.bill
 
+import com.ahmadabdullah.cardholder.data.Bank
 import com.ahmadabdullah.cardholder.data.BankCatalog
 import com.ahmadabdullah.cardholder.data.Card
 import java.time.LocalDate
@@ -15,8 +16,8 @@ data class Reminder(val part: BillPart, val deadline: LocalDate, val daysLeft: I
 }
 
 object Reminders {
-    /** How many days before a pay-by date the user is reminded. */
-    val DAYS_BEFORE = setOf(7, 5, 3, 2, 1)
+    /** How many days before a pay-by date the user is reminded. 0 is the pay-by day itself. */
+    val DAYS_BEFORE = setOf(7, 5, 3, 2, 1, 0)
 
     /**
      * The reminders to show today for [bill]. The taka and dollar parts are counted down
@@ -47,10 +48,17 @@ object BillMatcher {
         return matches.singleOrNull { card -> mentionsBank(senderAndText, card.bankId) }
     }
 
-    /** Whether the text names the bank, by its short id (UCB, EBL, City) or the first word of its name. */
+    /** The one bank the text names, if it names exactly one. */
+    fun bankNamedIn(text: String): Bank? = BankCatalog.banks.singleOrNull { mentionsBank(text, it.id) }
+
+    /**
+     * Whether the text names the bank: by its short code in capitals (UCB, EBL, CITY) or the first
+     * word of its name as written (City, Eastern, Dutch-Bangla). Letter case counts, so ONE Bank
+     * isn't found in every "one". "Bank" alone, as in Bank Asia, would match every bank.
+     */
     private fun mentionsBank(text: String, bankId: String): Boolean {
         val bank = BankCatalog.bank(bankId) ?: return false
-        val names = setOf(bank.id.replace('_', ' '), bank.name.substringBefore(' '))
-        return names.any { Regex("""\b${Regex.escape(it)}\b""", RegexOption.IGNORE_CASE).containsMatchIn(text) }
+        val names = setOf(bank.id.replace('_', ' ').uppercase(), bank.name.substringBefore(' ')) - setOf("Bank")
+        return names.any { Regex("""\b${Regex.escape(it)}\b""").containsMatchIn(text) }
     }
 }

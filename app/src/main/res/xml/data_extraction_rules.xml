@@ -4,9 +4,11 @@
     <cloud-backup>
         <exclude domain="file" path="cards.json" />
         <exclude domain="file" path="bills.json" />
+        <exclude domain="file" path="unmatched_bills.json" />
     </cloud-backup>
     <device-transfer>
         <exclude domain="file" path="cards.json" />
         <exclude domain="file" path="bills.json" />
+        <exclude domain="file" path="unmatched_bills.json" />
     </device-transfer>
 </data-extraction-rules>
