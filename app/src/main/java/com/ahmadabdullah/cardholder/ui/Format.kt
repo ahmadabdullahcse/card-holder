@@ -2,6 +2,8 @@ package com.ahmadabdullah.cardholder.ui
 
 import com.ahmadabdullah.cardholder.data.Card
 import com.ahmadabdullah.cardholder.data.CardNetwork
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 
@@ -17,6 +19,23 @@ fun groupLakh(amount: Long): String {
 fun formatBdt(amount: Long): String = "৳" + groupLakh(amount)
 
 fun formatUsd(amount: Long): String = "$" + String.format(Locale.US, "%,d", amount)
+
+/** An amount in poisha, with the paisa shown: ৳24,719.12. */
+fun formatBdtExact(poisha: Long): String = formatBdt(poisha / 100) + String.format(Locale.US, ".%02d", poisha % 100)
+
+/** An amount in cents: $1,023.00. */
+fun formatUsdExact(cents: Long): String = formatUsd(cents / 100) + String.format(Locale.US, ".%02d", cents % 100)
+
+/** "Tue 13 Oct" */
+fun formatDay(date: LocalDate): String = date.format(DateTimeFormatter.ofPattern("EEE d MMM", Locale.US))
+
+/** "today", "tomorrow", "in 3 days" */
+fun formatDaysLeft(daysLeft: Long): String = when {
+    daysLeft < 0 -> "overdue"
+    daysLeft == 0L -> "today"
+    daysLeft == 1L -> "tomorrow"
+    else -> "in $daysLeft days"
+}
 
 /** The card number with the unknown middle digits masked, grouped like the printed card. */
 fun maskedNumber(card: Card): String = when (card.network) {

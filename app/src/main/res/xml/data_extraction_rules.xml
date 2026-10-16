@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Saved cards stay on this phone: they are left out of cloud backups and device transfers. -->
+<!-- Saved cards and bills stay on this phone: they are left out of cloud backups and device transfers. -->
 <data-extraction-rules>
     <cloud-backup>
         <exclude domain="file" path="cards.json" />
+        <exclude domain="file" path="bills.json" />
     </cloud-backup>
     <device-transfer>
         <exclude domain="file" path="cards.json" />
+        <exclude domain="file" path="bills.json" />
     </device-transfer>
 </data-extraction-rules>

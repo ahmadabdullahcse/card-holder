@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -33,17 +34,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ahmadabdullah.cardholder.data.Card
+import com.ahmadabdullah.cardholder.data.bill.Bill
+import com.ahmadabdullah.cardholder.data.bill.Due
 import com.ahmadabdullah.cardholder.ui.CreditCardView
 import com.ahmadabdullah.cardholder.ui.formatBdt
+import com.ahmadabdullah.cardholder.ui.formatBdtExact
+import com.ahmadabdullah.cardholder.ui.formatDay
+import com.ahmadabdullah.cardholder.ui.formatDaysLeft
 import com.ahmadabdullah.cardholder.ui.formatShortDate
 import com.ahmadabdullah.cardholder.ui.formatUsd
+import com.ahmadabdullah.cardholder.ui.formatUsdExact
 import com.ahmadabdullah.cardholder.ui.monthNames
 import com.ahmadabdullah.cardholder.ui.nextBillingDate
 import com.ahmadabdullah.cardholder.ui.ordinal
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardDetailScreen(card: Card, onBack: () -> Unit, onDelete: () -> Unit) {
+fun CardDetailScreen(
+    card: Card,
+    bill: Bill?,
+    onBack: () -> Unit,
+    onDelete: () -> Unit,
+    onSetPaid: (Bill, Boolean) -> Unit,
+) {
     var confirmingDelete by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
@@ -74,6 +89,10 @@ fun CardDetailScreen(card: Card, onBack: () -> Unit, onDelete: () -> Unit) {
             Column(Modifier.widthIn(max = 440.dp)) {
                 CreditCardView(card)
                 Spacer(Modifier.height(24.dp))
+                if (bill != null) {
+                    BillSection(bill, onSetPaid = { onSetPaid(bill, it) })
+                    Spacer(Modifier.height(24.dp))
+                }
                 OutlinedCard(Modifier.fillMaxWidth()) {
                     DetailRow("Card", "${card.network.displayName} ${card.tier}")
                     HorizontalDivider()
@@ -109,6 +128,58 @@ fun CardDetailScreen(card: Card, onBack: () -> Unit, onDelete: () -> Unit) {
         )
     }
 }
+
+/** The latest bill the bank sent for this card: what's owed, and the last safe day to pay it. */
+@Composable
+private fun BillSection(bill: Bill, onSetPaid: (Boolean) -> Unit) {
+    val today = LocalDate.now()
+    val payBy = bill.payBy
+    val month = bill.statementMonth?.let { "${monthNames[it.monthValue - 1]} bill" } ?: "Latest bill"
+    Text(month, style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(start = 4.dp, bottom = 8.dp))
+    OutlinedCard(Modifier.fillMaxWidth()) {
+        DetailRow("Total due", dueText(bill.totalDue))
+        HorizontalDivider()
+        DetailRow("Minimum due", dueText(bill.minDue))
+        HorizontalDivider()
+        DetailRow("Due date", formatDay(bill.dueDate))
+        if (!bill.paid) {
+            payBy.bdt?.let {
+                HorizontalDivider()
+                DetailRow("Pay taka by", formatDay(it), formatDaysLeft(ChronoUnit.DAYS.between(today, it)))
+            }
+            payBy.usd?.let {
+                HorizontalDivider()
+                DetailRow(
+                    "Pay dollars by",
+                    formatDay(it),
+                    "${formatDaysLeft(ChronoUnit.DAYS.between(today, it))} · the bank needs time to convert",
+                )
+            }
+        }
+        HorizontalDivider()
+        Row(
+            Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                if (bill.paid) "Paid. No more reminders for this bill." else "Reminders come 7, 5, 3, 2 and 1 days before.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f),
+            )
+            if (bill.paid) {
+                TextButton(onClick = { onSetPaid(false) }) { Text("Not paid") }
+            } else {
+                Button(onClick = { onSetPaid(true) }) { Text("Mark as paid") }
+            }
+        }
+    }
+}
+
+private fun dueText(due: Due): String = listOfNotNull(
+    formatBdtExact(due.bdt).takeIf { due.bdt > 0 },
+    formatUsdExact(due.usd).takeIf { due.usd > 0 },
+).joinToString(" + ").ifEmpty { "Nothing" }
 
 @Composable
 private fun DetailRow(label: String, value: String, note: String? = null) {

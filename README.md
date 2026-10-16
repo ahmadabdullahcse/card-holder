@@ -18,6 +18,14 @@ The first release covers credit cards issued in **Bangladesh**.
 - **Card details.** Shows the BDT and USD limits, the expiry date, and the billing date along with the next date the bill is due. BDT amounts are grouped the Bangladeshi way (৳12,00,000).
 - **Adding a card.** Choose the bank, then the network, then the tier. Each list offers only what the chosen bank actually issues, so you can't pick a card that doesn't exist. A preview of the card updates as you type.
 - **Removing a card.** Use the delete button on the card's page. It asks before removing.
+- **Bill reminders.** Card holder reads the bill your bank sends each month (by SMS or app notification), saves it on the matching card, and reminds you 7, 5, 3, 2 and 1 days before the last safe day to pay. Mark the bill as paid to stop the reminders.
+
+### How the pay-by date is worked out
+
+- **Banks are closed on Fridays, Saturdays and bank holidays.** When a due date falls on one of these, the pay-by date moves to the last open day before it, never after.
+- **Dollar dues come first.** A dollar due is paid in taka, and the bank takes working days to convert it, so that part has an earlier pay-by date with its own countdown. UCB takes 2 working days; other banks are assumed to take 2 until known.
+- **Holidays** come from Bangladesh Bank's official list. The 2027 list is added once Bangladesh Bank publishes it.
+- **Bills are read from UCB, City and EBL** so far. Other banks' bills are read if their messages use the same wording ("Total Due", "Min Due", a due date and a masked card number); more formats will be added as samples come in.
 
 ### What you enter
 
@@ -48,7 +56,8 @@ The first release covers credit cards issued in **Bangladesh**.
 ## Privacy
 
 - **Only the first and last 4 digits** of the card number are kept. The app never asks for the full number, the CVV or the PIN.
-- **Cards stay on the phone.** They are saved in the app's private storage and left out of Google cloud backups and device-to-device transfers.
+- **Cards and bills stay on the phone.** They are saved in the app's private storage and left out of Google cloud backups and device-to-device transfers.
+- **Bill reading is opt-in.** It works only after you switch on notification access for Card holder in Android's settings. Card holder keeps nothing from a notification except a credit card bill for one of your saved cards, and from that only the amounts, the due date and the month. You can switch it off at any time.
 - **No network access.** The app has no internet permission, no accounts and no analytics.
 
 ## Roadmap
@@ -88,17 +97,20 @@ Built with Kotlin and Jetpack Compose (Material 3), in a single `app` module.
 
 ```
 app/src/main/java/com/ahmadabdullah/cardholder/
-├── MainActivity.kt           Switches between the wallet, card and add-card screens
+├── MainActivity.kt           Switches between the wallet, card, add-card and reminder setup screens
 ├── data/
 │   ├── BankCatalog.kt        Banks, the networks each issues, and the tiers on each network
 │   ├── Card.kt               A saved card, and its JSON form
-│   └── CardStore.kt          Reads and writes cards.json in private storage
+│   ├── CardStore.kt          Reads and writes cards.json in private storage
+│   └── bill/                 Reading bills from messages, bank holidays, pay-by dates, reminder days
+├── reminders/                The notification reader, the daily reminder check, and the notifications
 └── ui/
     ├── WalletViewModel.kt    Loads, adds and removes cards
     ├── CreditCardView.kt     Draws a card: tier colors, chip, network mark
     ├── Format.kt             Taka grouping, masked numbers, billing and expiry dates
     ├── wallet/               The stacked wallet
-    ├── detail/               A card's details, and removing it
+    ├── detail/               A card's details and latest bill, and removing it
+    ├── setup/                Explaining bill reading and turning it on
     └── addcard/              The add-card form, and CardDraft, which checks what was entered
 ```
 

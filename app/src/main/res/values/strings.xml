@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Card holder</string>
+    <string name="bill_listener_label">Card holder bill reminders</string>
 </resources>

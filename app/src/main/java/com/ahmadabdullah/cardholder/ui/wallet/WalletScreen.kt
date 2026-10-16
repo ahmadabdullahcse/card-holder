@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -15,11 +16,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -32,6 +35,7 @@ import androidx.compose.ui.unit.min
 import com.ahmadabdullah.cardholder.data.Card
 import com.ahmadabdullah.cardholder.ui.CARD_ASPECT_RATIO
 import com.ahmadabdullah.cardholder.ui.CreditCardView
+import com.ahmadabdullah.cardholder.ui.setup.rememberBillReadingAccess
 
 /** How much of each card shows above the next one in the stack: enough for its bank and tier. */
 private val StackPeek = 64.dp
@@ -45,7 +49,9 @@ fun WalletScreen(
     cards: List<Card>?,
     onAddCard: () -> Unit,
     onOpenCard: (Card) -> Unit,
+    onSetUpReminders: () -> Unit,
 ) {
+    val access = rememberBillReadingAccess()
     Scaffold(
         topBar = { TopAppBar(title = { Text("Card holder") }) },
         floatingActionButton = {
@@ -61,7 +67,13 @@ fun WalletScreen(
                 CircularProgressIndicator()
             }
             cards.isEmpty() -> EmptyWallet(Modifier.padding(padding))
-            else -> CardStack(cards, onOpenCard, PaddingValues(bottom = 96.dp), Modifier.padding(padding))
+            else -> CardStack(
+                cards,
+                onOpenCard,
+                header = { if (!access.isComplete) RemindersPrompt(onSetUpReminders) },
+                contentPadding = PaddingValues(bottom = 96.dp),
+                modifier = Modifier.padding(padding),
+            )
         }
     }
 }
@@ -70,6 +82,7 @@ fun WalletScreen(
 private fun CardStack(
     cards: List<Card>,
     onOpenCard: (Card) -> Unit,
+    header: @Composable () -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
@@ -83,10 +96,31 @@ private fun CardStack(
     ) {
         val cardWidth = min(maxWidth, MaxCardWidth)
         val cardHeight = cardWidth / CARD_ASPECT_RATIO
-        Box(Modifier.width(cardWidth).height(StackPeek * (cards.size - 1) + cardHeight)) {
-            cards.forEachIndexed { index, card ->
-                CreditCardView(card, Modifier.offset(y = StackPeek * index), onClick = { onOpenCard(card) })
+        Column(Modifier.width(cardWidth), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            header()
+            Box(Modifier.height(StackPeek * (cards.size - 1) + cardHeight)) {
+                cards.forEachIndexed { index, card ->
+                    CreditCardView(card, Modifier.offset(y = StackPeek * index), onClick = { onOpenCard(card) })
+                }
             }
+        }
+    }
+}
+
+/** Asks the user to set up bill reading, until both switches are on. */
+@Composable
+private fun RemindersPrompt(onSetUp: () -> Unit) {
+    OutlinedCard(Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp)) {
+            Text("Never miss a bill", style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.height(4.dp))
+            Text(
+                "Let Card holder read your bank's bill messages and remind you before each due date.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(12.dp))
+            Button(onClick = onSetUp) { Text("Set up reminders") }
         }
     }
 }
