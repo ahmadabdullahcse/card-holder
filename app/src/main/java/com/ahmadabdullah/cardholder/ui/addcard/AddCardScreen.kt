@@ -51,8 +51,13 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddCardScreen(onBack: () -> Unit, onSave: (Card) -> Unit) {
-    var draft by rememberSaveable(stateSaver = DraftSaver) { mutableStateOf(CardDraft()) }
+fun AddCardScreen(
+    onBack: () -> Unit,
+    onSave: (Card) -> Unit,
+    title: String = "Add card",
+    initial: CardDraft = CardDraft(),
+) {
+    var draft by rememberSaveable(stateSaver = DraftSaver) { mutableStateOf(initial) }
     // Errors for fields left empty stay hidden until Save is tapped; wrong values show as typed.
     var showAllErrors by rememberSaveable { mutableStateOf(false) }
     fun error(error: String?, filled: Boolean) = if (showAllErrors || filled) error else null
@@ -60,7 +65,7 @@ fun AddCardScreen(onBack: () -> Unit, onSave: (Card) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Add card") },
+                title = { Text(title) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")

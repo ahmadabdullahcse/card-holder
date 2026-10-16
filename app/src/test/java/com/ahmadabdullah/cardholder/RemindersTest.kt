@@ -34,11 +34,13 @@ class RemindersTest {
     private fun daysLeftOn(bill: Bill, today: String) = Reminders.due(bill, date(today)).map { it.part to it.daysLeft }
 
     @Test
-    fun remindsSevenFiveThreeTwoAndOneDaysBefore() {
+    fun remindsSevenFiveThreeTwoAndOneDaysBeforeAndOnTheDay() {
         val days = (1..10).map { date("2026-09-30").plusDays(it.toLong()) }
             .filter { Reminders.due(ebl, it).isNotEmpty() }
         // Pay by Thursday 8 October.
-        assertEquals(listOf("2026-10-01", "2026-10-03", "2026-10-05", "2026-10-06", "2026-10-07").map(::date), days)
+        assertEquals(listOf("2026-10-01", "2026-10-03", "2026-10-05", "2026-10-06", "2026-10-07", "2026-10-08").map(::date), days)
+        assertEquals(listOf(BillPart.BDT to 0), daysLeftOn(ebl, "2026-10-08"))
+        assertTrue(Reminders.due(ebl, date("2026-10-09")).isEmpty())
     }
 
     @Test
@@ -47,6 +49,8 @@ class RemindersTest {
         assertEquals(listOf(BillPart.USD to 7), daysLeftOn(ucb, "2026-10-04"))
         // Thursday 8 October: 3 days to the dollars, 5 to the taka. Both in one notification.
         assertEquals(listOf(BillPart.BDT to 5, BillPart.USD to 3), daysLeftOn(ucb, "2026-10-08"))
+        // Sunday 11 October: the last day for the dollars, and 2 days to the taka.
+        assertEquals(listOf(BillPart.BDT to 2, BillPart.USD to 0), daysLeftOn(ucb, "2026-10-11"))
         // Monday 12 October: the dollar deadline has passed, 1 day to the taka.
         assertEquals(listOf(BillPart.BDT to 1), daysLeftOn(ucb, "2026-10-12"))
     }
@@ -76,5 +80,15 @@ class RemindersTest {
         val twins = cards + card("city-card", "city", "3761", "8673")
         assertEquals("ucb-card", BillMatcher.cardFor(message, twins, "UCB Bill for UCB Card#8673")?.id)
         assertNull(BillMatcher.cardFor(message, twins, "Bill for Card#8673"))
+    }
+
+    @Test
+    fun theBankIsFoundByItsOwnSpelling() {
+        assertEquals("ucb", BillMatcher.bankNamedIn("Dear C/H, Bill for UCB Card#8673")?.id)
+        assertEquals("city", BillMatcher.bankNamedIn("City Islamic Amex Bill Sep'26")?.id)
+        assertEquals("ebl", BillMatcher.bankNamedIn("EBL Monthly bill 447780****5812")?.id)
+        // EBL's own message names no bank, and plain words aren't banks.
+        assertNull(BillMatcher.bankNamedIn("Monthly bill 447780****5812 SEP2026"))
+        assertNull(BillMatcher.bankNamedIn("Pay one bill at the bank"))
     }
 }

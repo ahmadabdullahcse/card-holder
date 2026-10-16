@@ -29,6 +29,9 @@ class CardStore private constructor(context: Context) {
 
     suspend fun add(card: Card) = update { it + card }
 
+    /** Replaces the saved card that has the same id. */
+    suspend fun replace(card: Card) = update { cards -> cards.map { if (it.id == card.id) card else it } }
+
     suspend fun delete(id: String) = update { cards -> cards.filterNot { it.id == id } }
 
     private suspend fun update(change: (List<Card>) -> List<Card>) = lock.withLock {

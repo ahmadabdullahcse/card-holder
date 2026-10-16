@@ -110,7 +110,8 @@ fun BillReadingSetupScreen(onBack: () -> Unit) {
                     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text("What Card holder reads", style = MaterialTheme.typography.titleSmall)
                         Bullet("It sees each notification as it arrives, from any app, including your SMS app.")
-                        Bullet("It keeps only credit card bills for cards you've saved here: the amounts due, the due date and the month.")
+                        Bullet("It keeps only credit card bills: the amounts due, the due date, the month and the few card digits the bank shows.")
+                        Bullet("A bill for a card you haven't added yet is kept so Card holder can offer to add it.")
                         Bullet("Everything else is looked at and forgotten. Nothing is saved, and nothing leaves your phone.")
                         Bullet("You can turn this off at any time in Android's settings.")
                     }

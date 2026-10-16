@@ -7,6 +7,8 @@ import com.ahmadabdullah.cardholder.data.Card
 import com.ahmadabdullah.cardholder.data.CardStore
 import com.ahmadabdullah.cardholder.data.bill.Bill
 import com.ahmadabdullah.cardholder.data.bill.BillStore
+import com.ahmadabdullah.cardholder.data.bill.UnmatchedBill
+import com.ahmadabdullah.cardholder.reminders.ReminderWorker
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
@@ -26,8 +28,26 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun add(card: Card) {
-        viewModelScope.launch { cardStore.add(card) }
+        viewModelScope.launch {
+            cardStore.add(card)
+            claimBills(card)
+        }
     }
+
+    fun update(card: Card) {
+        viewModelScope.launch {
+            cardStore.replace(card)
+            claimBills(card)
+        }
+    }
+
+    /** Moves bills that were waiting for this card onto it, and reminds of them if they're due soon. */
+    private suspend fun claimBills(card: Card) {
+        if (billStore.claimUnmatched(card)) ReminderWorker.checkNow(getApplication())
+    }
+
+    /** A bill that arrived for a card that isn't saved, to start the add-card form from. */
+    suspend fun unmatchedBill(id: String): UnmatchedBill? = billStore.unmatched(id)
 
     fun delete(id: String) {
         viewModelScope.launch {

@@ -2,6 +2,10 @@ package com.ahmadabdullah.cardholder
 
 import com.ahmadabdullah.cardholder.data.BankCatalog
 import com.ahmadabdullah.cardholder.data.CardNetwork
+import com.ahmadabdullah.cardholder.data.bill.BillMessage
+import com.ahmadabdullah.cardholder.data.bill.CardDigits
+import com.ahmadabdullah.cardholder.data.bill.Due
+import com.ahmadabdullah.cardholder.data.bill.UnmatchedBill
 import com.ahmadabdullah.cardholder.ui.addcard.CardDraft
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -112,5 +116,47 @@ class CardDraftTest {
         assertNull(complete.copy(lastFour = "12").toCard())
         assertNull(complete.copy(lastName = "R2D2").toCard())
         assertNotNull(complete.copy(usdLimit = "0").toCard())
+    }
+
+    @Test
+    fun aSavedCardOpensForEditingWithEverythingFilledIn() {
+        val card = complete.toCard("card-id")!!
+        val draft = CardDraft.from(card, today = today)
+        assertEquals(card, draft.toCard("card-id"))
+        // An endorsed passport raises the USD limit.
+        assertEquals(5_000L, draft.copy(usdLimit = "5000").toCard("card-id")!!.usdLimit)
+    }
+
+    @Test
+    fun anExpiredDateMustBeChosenAgainWhenEditing() {
+        val expired = complete.toCard("card-id")!!.copy(expiryMonth = 3, expiryYear = 2026)
+        val draft = CardDraft.from(expired, today = today)
+        assertNull(draft.expiryMonth)
+        assertNull(draft.expiryYear)
+        assertNull(draft.toCard())
+    }
+
+    @Test
+    fun aBillForAnUnsavedCardFillsInWhatItShows() {
+        fun draftFor(prefix: String, suffix: String, bankId: String?) = CardDraft.from(
+            UnmatchedBill(
+                BillMessage(CardDigits(prefix, suffix), null, Due(100, 0), Due(10, 0), java.time.LocalDate.of(2026, 10, 22)),
+                bankId,
+            )
+        )
+        val ebl = draftFor("447780", "5812", null)
+        assertEquals("4477", ebl.firstFour)
+        assertEquals("5812", ebl.lastFour)
+        assertNull(ebl.bank)
+
+        // City shows only 3 digits at each end, so neither is filled in; Jamuna issues only Visa.
+        val city = draftFor("376", "786", "city")
+        assertEquals("", city.firstFour)
+        assertEquals("", city.lastFour)
+        assertEquals("city", city.bank?.id)
+        assertEquals(CardNetwork.AMEX, city.network)
+        // A 4… card at a bank with Visa and Mastercard is a Visa.
+        assertEquals(CardNetwork.VISA, draftFor("447780", "5812", "ebl").network)
+        assertEquals(CardNetwork.VISA, draftFor("", "8673", "jamuna").network)
     }
 }

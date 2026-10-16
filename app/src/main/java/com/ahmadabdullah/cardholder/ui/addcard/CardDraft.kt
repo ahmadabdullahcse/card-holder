@@ -4,6 +4,7 @@ import com.ahmadabdullah.cardholder.data.Bank
 import com.ahmadabdullah.cardholder.data.BankCatalog
 import com.ahmadabdullah.cardholder.data.Card
 import com.ahmadabdullah.cardholder.data.CardNetwork
+import com.ahmadabdullah.cardholder.data.bill.UnmatchedBill
 import java.util.Calendar
 import java.util.UUID
 
@@ -123,6 +124,55 @@ data class CardDraft(
 
         fun currentMonthIndex(now: Calendar = Calendar.getInstance()): Int =
             now.get(Calendar.YEAR) * 12 + now.get(Calendar.MONTH)
+
+        /**
+         * A draft started from a bill that arrived for a card that isn't saved: the bank, if
+         * the message named it, whichever of the first and last four digits it showed, and the
+         * network when those first digits fit only one of the bank's networks (376… is Amex).
+         */
+        fun from(bill: UnmatchedBill): CardDraft {
+            val digits = bill.message.card
+            val draft = CardDraft(
+                firstFour = digits.prefix.takeIf { it.length >= 4 }?.take(4).orEmpty(),
+                lastFour = digits.suffix.takeIf { it.length == 4 }.orEmpty(),
+            )
+            val bank = bill.bankId?.let(BankCatalog::bank) ?: return draft
+            val withBank = draft.withBank(bank)
+            if (withBank.network != null || digits.prefix.length < 2) return withBank
+            // Pad the digits shown both ways, so that "222" can still be a 2221… Mastercard.
+            val start = digits.prefix.take(4)
+            val network = bank.networks.singleOrNull { network ->
+                listOf('0', '9').any { network.acceptsFirstFour(start.padEnd(4, it)) }
+            }
+            return network?.let(withBank::withNetwork) ?: withBank
+        }
+
+        /**
+         * A draft holding a saved card, for editing it. Anything the card holds that can no
+         * longer be chosen is left empty to choose again: a bank or tier dropped from the
+         * catalog, or an expiry date that has passed.
+         */
+        fun from(card: Card, today: Int = currentMonthIndex()): CardDraft {
+            val bank = BankCatalog.bank(card.bankId)
+            val network = card.network.takeIf { bank != null && it in bank.networks }
+            val tier = card.tier.takeIf { network != null && it in bank!!.tiersFor(network) }
+            val unexpired = card.expiryYear * 12 + card.expiryMonth - 1 >= today
+            return CardDraft(
+                bank = bank,
+                network = network,
+                tier = tier,
+                firstName = card.firstName,
+                lastName = card.lastName,
+                firstFour = card.firstFour,
+                lastFour = card.lastFour,
+                bdtLimit = card.bdtLimit.toString(),
+                usdLimit = card.usdLimit.toString(),
+                billingDay = card.billingDay,
+                expiryMonth = card.expiryMonth.takeIf { unexpired },
+                expiryYear = card.expiryYear.takeIf { unexpired },
+                today = today,
+            )
+        }
 
         private fun nameError(name: String, label: String): String? = when {
             name.isBlank() -> "Enter the ${label.lowercase()}"

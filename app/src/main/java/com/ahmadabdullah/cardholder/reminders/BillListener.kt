@@ -12,8 +12,10 @@ import androidx.core.app.NotificationManagerCompat
 import com.ahmadabdullah.cardholder.data.CardStore
 import com.ahmadabdullah.cardholder.data.bill.Bill
 import com.ahmadabdullah.cardholder.data.bill.BillMatcher
+import com.ahmadabdullah.cardholder.data.bill.BillMessage
 import com.ahmadabdullah.cardholder.data.bill.BillParser
 import com.ahmadabdullah.cardholder.data.bill.BillStore
+import com.ahmadabdullah.cardholder.data.bill.UnmatchedBill
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -24,8 +26,9 @@ import kotlinx.coroutines.launch
  * Reads notifications as they arrive, looking for credit card bills from the user's banks.
  * Android only runs this once the user turns on notification access for Card holder.
  *
- * Only a bill for one of the user's saved cards is kept, and only the amounts and dates are
- * kept from it. Every other notification is looked at and forgotten.
+ * Only credit card bills are kept, and from them only the amounts, dates and the digits the bank
+ * shows. A bill for a card that isn't saved yet is kept so the user can add the card. Every other
+ * notification is looked at and forgotten.
  */
 class BillListener : NotificationListenerService() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -39,11 +42,25 @@ class BillListener : NotificationListenerService() {
         scope.launch { save(sender, texts) }
     }
 
+    /**
+     * Saves every bill in the notification. An SMS app shows a conversation as one notification
+     * holding its recent messages, so last month's bill from the same sender is often there too.
+     */
     private suspend fun save(sender: String, texts: List<String>) {
-        val (text, message) = texts.firstNotNullOfOrNull { text -> BillParser.parse(text)?.let { text to it } } ?: return
+        texts.mapNotNull { text -> BillParser.parse(text)?.let { it to text } }
+            .distinctBy { (message, _) -> message }
+            .forEach { (message, text) -> save(sender, text, message) }
+    }
+
+    private suspend fun save(sender: String, text: String, message: BillMessage) {
         val cardStore = CardStore.get(this)
         cardStore.load()
-        val card = BillMatcher.cardFor(message, cardStore.cards.value.orEmpty(), "$sender $text") ?: return
+        val card = BillMatcher.cardFor(message, cardStore.cards.value.orEmpty(), "$sender $text")
+        if (card == null) {
+            val unmatched = UnmatchedBill(message, BillMatcher.bankNamedIn("$sender $text")?.id)
+            if (BillStore.get(this).saveUnmatched(unmatched)) BillNotifications.showAddCardPrompt(this, unmatched)
+            return
+        }
 
         val bill = Bill.from(message, card.id)
         if (BillStore.get(this).save(bill)) {
@@ -58,7 +75,7 @@ class BillListener : NotificationListenerService() {
     }
 
     /**
-     * Everything a notification says, longest first. SMS apps put the whole message in the big
+     * Everything a notification says. SMS apps put the whole message in the big
      * text or in a list of messages, and only the start of it in the plain text.
      */
     private fun texts(extras: Bundle): List<String> {
