@@ -115,4 +115,8 @@ To add or change a bank:
 
 ## License
 
-Released under the [MIT License](LICENSE).
+Card holder's source code is public, and you're free to use, study, change and share it for any **noncommercial** purpose: personal use, learning, research, hobby projects, or use by charities, schools and government bodies.
+
+**Commercial use is not allowed.** That includes selling the app, publishing it in an app store for money or ads, or building it into a paid product. For any of that, ask the author first.
+
+The full terms are in [LICENSE.md](LICENSE.md) ([PolyForm Noncommercial 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0)).
