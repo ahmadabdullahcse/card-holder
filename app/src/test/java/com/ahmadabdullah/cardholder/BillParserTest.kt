@@ -94,8 +94,25 @@ class BillParserTest {
     fun banksAreClosedOnWeekendsAndHolidays() {
         assertTrue(BankCalendar.isOpen(date("2026-10-13"))) // Tuesday
         assertFalse(BankCalendar.isOpen(date("2026-10-16"))) // Friday
-        assertFalse(BankCalendar.isOpen(date("2026-10-17"))) // Saturday
+        assertFalse(BankCalendar.isOpen(date("2026-10-24"))) // Saturday
         assertFalse(BankCalendar.isOpen(date("2026-10-20"))) // Durga Puja
+        assertFalse(BankCalendar.isOpen(date("2026-10-22"))) // Durga Puja, swapped for the 17th
+        // A Saturday made a working day, in exchange for 22 October.
+        assertTrue(BankCalendar.isOpen(date("2026-10-17")))
+    }
+
+    @Test
+    fun aDownloadedCalendarAddsHolidaysAndWorkingDays() {
+        try {
+            // A holiday announced after release, and a Friday made a working day.
+            BankCalendar.useDownloaded(setOf(date("2026-11-10")), setOf(date("2026-11-13")))
+            assertFalse(BankCalendar.isOpen(date("2026-11-10")))
+            assertTrue(BankCalendar.isOpen(date("2026-11-13")))
+            // The built-in holidays still apply.
+            assertFalse(BankCalendar.isOpen(date("2026-12-16")))
+        } finally {
+            BankCalendar.useDownloaded(emptySet(), emptySet())
+        }
     }
 
     @Test
@@ -118,9 +135,12 @@ class BillParserTest {
 
     @Test
     fun conversionDaysSkipHolidays() {
-        // Due Thursday 22 October. Durga Puja closes banks on the 20th and 21st, so the two
-        // banking days before the due date are Monday the 19th and Sunday the 18th.
+        // Due Thursday 22 October. Durga Puja closes banks from the 20th to the 22nd, so BDT is
+        // due by Monday the 19th. The two banking days before that are Sunday the 18th and
+        // Saturday the 17th, a working Saturday, so USD is due by the 17th.
         val bill = BillParser.parse(ucb.replace("13-10-26", "22-10-26"))!!
-        assertEquals(date("2026-10-18"), PayBy.of(bill, usdConversionDays = 2).usd)
+        val payBy = PayBy.of(bill, usdConversionDays = 2)
+        assertEquals(date("2026-10-19"), payBy.bdt)
+        assertEquals(date("2026-10-17"), payBy.usd)
     }
 }

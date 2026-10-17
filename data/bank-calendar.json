@@ -1,0 +1,19 @@
+{
+  "about": "Days banks in Bangladesh are closed or specially open, beyond the usual Friday and Saturday weekend. Card holder downloads this file once a week, so editing it here updates every installed app without a new release. Dates are YYYY-MM-DD.",
+  "updated": "2026-10-17",
+  "source": "Bangladesh Bank holiday list (bb.org.bd/en/index.php/mediaroom/holiday) and its circulars",
+  "holidays": [
+    "2026-02-04", "2026-02-21", "2026-03-17",
+    "2026-03-19", "2026-03-20", "2026-03-21", "2026-03-22", "2026-03-23",
+    "2026-03-26", "2026-04-14", "2026-05-01",
+    "2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-05-30", "2026-05-31",
+    "2026-06-26", "2026-07-01", "2026-08-05", "2026-08-26", "2026-09-04",
+    "2026-10-20", "2026-10-21", "2026-10-22",
+    "2026-12-16", "2026-12-25", "2026-12-31",
+    "2027-02-21", "2027-03-26", "2027-04-14", "2027-05-01", "2027-07-01", "2027-08-05",
+    "2027-12-16", "2027-12-25", "2027-12-31"
+  ],
+  "workingDays": [
+    "2026-10-17"
+  ]
+}

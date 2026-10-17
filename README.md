@@ -26,7 +26,7 @@ The first release covers credit cards issued in **Bangladesh**.
 
 - **Banks are closed on Fridays, Saturdays and bank holidays.** When a due date falls on one of these, the pay-by date moves to the last open day before it, never after.
 - **USD dues come first.** A USD due is paid in BDT, and the bank takes working days to convert it, so that part has an earlier pay-by date with its own countdown. UCB takes 2 working days; other banks are assumed to take 2 until known.
-- **Holidays** come from Bangladesh Bank's official list. The 2027 list is added once Bangladesh Bank publishes it.
+- **Holidays and working Saturdays** come from Bangladesh Bank's official list and circulars. The app downloads [`data/bank-calendar.json`](data/bank-calendar.json) from this repository once a week, so a holiday or working Saturday announced at short notice reaches every phone without a new release. See [Updating holidays](#updating-holidays).
 - **Bills are read from UCB, City and EBL** so far. Other banks' bills are read if their messages use the same wording ("Total Due", "Min Due", a due date and a masked card number); more formats will be added as samples come in.
 
 ### What you enter
@@ -60,11 +60,13 @@ The first release covers credit cards issued in **Bangladesh**.
 - **Only the first and last 4 digits** of the card number are kept. The app never asks for the full number, the CVV or the PIN.
 - **Cards and bills stay on the phone.** They are saved in the app's private storage and left out of Google cloud backups and device-to-device transfers.
 - **Bill reading is opt-in.** It works only after you switch on notification access for Card holder in Android's settings. Card holder keeps nothing from a notification except a credit card bill, and from that only the amounts, the due date, the month and the few card digits the bank shows. You can switch it off at any time.
-- **No network access.** The app has no internet permission, no accounts and no analytics.
+- **Nothing is sent anywhere.** The app uses the internet only to download the holiday list and to check this repository for a new version. No card, bill or personal data ever leaves the phone, and there are no accounts and no analytics.
 
 ## Roadmap
 
-- **Holiday updates without an app update:** a holiday list the app downloads from this repository, kept current from Bangladesh Bank's site, so new and moon-dependent holidays arrive within a week.
+- **Keeping the holiday list current automatically:** a scheduled GitHub job that reads Bangladesh Bank's holiday page and updates `data/bank-calendar.json`.
+- **How each card is paid:** pay-by dates that depend on the payment method (NPSB posts instantly even on weekends; bKash and Nagad can take 3 working days).
+- **Google Play release:** with its own signing key, and without the GitHub updater, which Play doesn't allow.
 
 - **Expiry reminders:** two months and one month before a card expires, for anyone who wants to cancel it rather than let it renew.
 - **Annual fee reminders:** shortly before each card's yearly anniversary, so you can close the card or make sure the annual fee is waived.
@@ -100,7 +102,9 @@ The app runs on Android 7.0 (API 24) and up.
 Built with Kotlin and Jetpack Compose (Material 3), in a single `app` module.
 
 ```
+data/bank-calendar.json       Holidays and working Saturdays, downloaded by the app each week
 app/src/main/java/com/ahmadabdullah/cardholder/
+├── CardHolderApplication.kt  Loads the downloaded holiday list when the app starts
 ├── MainActivity.kt           Switches between the wallet, card, add-card and reminder setup screens
 ├── data/
 │   ├── BankCatalog.kt        Banks, the networks each issues, and the tiers on each network
@@ -108,6 +112,7 @@ app/src/main/java/com/ahmadabdullah/cardholder/
 │   ├── CardStore.kt          Reads and writes cards.json in private storage
 │   └── bill/                 Reading bills from messages, bank holidays, pay-by dates, reminder days
 ├── reminders/                The notification reader, the daily reminder check, and the notifications
+├── sync/                     The weekly holiday download, and updating the app from GitHub Releases
 └── ui/
     ├── WalletViewModel.kt    Loads, adds and removes cards
     ├── CreditCardView.kt     Draws a card: tier colors, chip, network mark
@@ -117,6 +122,24 @@ app/src/main/java/com/ahmadabdullah/cardholder/
     ├── setup/                Explaining bill reading and turning it on
     └── addcard/              The add-card form, and CardDraft, which checks what was entered
 ```
+
+## Updating holidays
+
+Edit [`data/bank-calendar.json`](data/bank-calendar.json) on GitHub: add the date to `holidays` when banks will be closed, or to `workingDays` when a Friday or Saturday is made a working day. Every installed app picks it up within a week; nothing needs to be released. The built-in list in `BankCalendar.kt` is only a fallback for phones that haven't downloaded the file yet, so it needs updating only when you release a new version anyway.
+
+## Releasing an update to testers
+
+Testers who installed the APK get an "Update available" banner in the app as soon as a newer GitHub release exists.
+
+1. Raise `versionName` (and `versionCode`) in `app/build.gradle.kts`, for example to 1.1 and 2.
+2. Build the APK with `./gradlew assembleDebug`.
+3. Publish a GitHub release whose tag is the version with a `v` in front, with the APK attached:
+
+   ```bash
+   gh release create v1.1 app/build/outputs/apk/debug/app-debug.apk --title "Card holder 1.1" --notes "What changed"
+   ```
+
+The notes are shown in the banner. Android asks testers to confirm the install, and only accepts an APK signed with the same key as the version they have. Until the app has a release signing key, every APK must be built on the same computer.
 
 ## Updating the bank list
 
