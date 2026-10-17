@@ -25,7 +25,7 @@ The first release covers credit cards issued in **Bangladesh**.
 ### How the pay-by date is worked out
 
 - **Banks are closed on Fridays, Saturdays and bank holidays.** When a due date falls on one of these, the pay-by date moves to the last open day before it, never after.
-- **Dollar dues come first.** A dollar due is paid in taka, and the bank takes working days to convert it, so that part has an earlier pay-by date with its own countdown. UCB takes 2 working days; other banks are assumed to take 2 until known.
+- **USD dues come first.** A USD due is paid in BDT, and the bank takes working days to convert it, so that part has an earlier pay-by date with its own countdown. UCB takes 2 working days; other banks are assumed to take 2 until known.
 - **Holidays** come from Bangladesh Bank's official list. The 2027 list is added once Bangladesh Bank publishes it.
 - **Bills are read from UCB, City and EBL** so far. Other banks' bills are read if their messages use the same wording ("Total Due", "Min Due", a due date and a masked card number); more formats will be added as samples come in.
 
@@ -111,7 +111,7 @@ app/src/main/java/com/ahmadabdullah/cardholder/
 └── ui/
     ├── WalletViewModel.kt    Loads, adds and removes cards
     ├── CreditCardView.kt     Draws a card: tier colors, chip, network mark
-    ├── Format.kt             Taka grouping, masked numbers, billing and expiry dates
+    ├── Format.kt             BDT grouping, masked numbers, billing and expiry dates
     ├── wallet/               The stacked wallet
     ├── detail/               A card's details and latest bill, and removing it
     ├── setup/                Explaining bill reading and turning it on
