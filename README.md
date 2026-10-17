@@ -9,7 +9,7 @@ The first release covers credit cards issued in **Bangladesh**.
   &nbsp;
   <img src="docs/screenshots/add-card.png" width="260" alt="Adding a card, with a live preview above the form">
   &nbsp;
-  <img src="docs/screenshots/card-details.png" width="260" alt="A card's limits, expiry and next billing date">
+  <img src="docs/screenshots/card-details.png" width="260" alt="A card with its latest bill and the BDT and USD pay-by dates">
 </p>
 
 ## What it does
