@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Debug builds only: a gallery of every card design. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <activity
+            android:name=".DesignGalleryActivity"
+            android:exported="true"
+            android:label="Card designs" />
+    </application>
+</manifest>
