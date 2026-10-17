@@ -1,6 +1,7 @@
 package com.ahmadabdullah.cardholder.ui
 
 import android.app.Application
+import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmadabdullah.cardholder.data.Card
@@ -9,7 +10,12 @@ import com.ahmadabdullah.cardholder.data.bill.Bill
 import com.ahmadabdullah.cardholder.data.bill.BillStore
 import com.ahmadabdullah.cardholder.data.bill.UnmatchedBill
 import com.ahmadabdullah.cardholder.reminders.ReminderWorker
+import com.ahmadabdullah.cardholder.sync.AppUpdate
+import com.ahmadabdullah.cardholder.sync.AppUpdater
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class WalletViewModel(application: Application) : AndroidViewModel(application) {
@@ -22,9 +28,44 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     /** The saved bills, or null while they are still loading. */
     val bills: StateFlow<List<Bill>?> = billStore.bills
 
+    private val _update = MutableStateFlow<UpdateState>(UpdateState.None)
+
+    /** Whether a newer version is on GitHub, and how far its download has got. */
+    val update: StateFlow<UpdateState> = _update.asStateFlow()
+
     init {
         viewModelScope.launch { cardStore.load() }
         viewModelScope.launch { billStore.load() }
+        viewModelScope.launch(Dispatchers.IO) {
+            AppUpdater.check()?.let { _update.value = UpdateState.Available(it) }
+        }
+    }
+
+    /**
+     * Downloads the update and opens Android's installer. The first time, Android has to be told
+     * to let Card holder install apps; the settings page for that opens instead.
+     */
+    fun installUpdate() {
+        val update = when (val state = _update.value) {
+            is UpdateState.Available -> state.update
+            is UpdateState.Failed -> state.update
+            else -> return
+        }
+        val app = getApplication<Application>()
+        if (!AppUpdater.canInstall(app)) {
+            app.startActivity(AppUpdater.installPermissionSettings(app).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            return
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            _update.value = UpdateState.Downloading(update, 0f)
+            try {
+                val apk = AppUpdater.download(app, update) { _update.value = UpdateState.Downloading(update, it) }
+                _update.value = UpdateState.Available(update)
+                AppUpdater.install(app, apk)
+            } catch (e: Exception) {
+                _update.value = UpdateState.Failed(update)
+            }
+        }
     }
 
     fun add(card: Card) {
@@ -59,4 +100,11 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     fun setPaid(bill: Bill, paid: Boolean) {
         viewModelScope.launch { billStore.setPaid(bill.id, paid) }
     }
+}
+
+sealed interface UpdateState {
+    data object None : UpdateState
+    data class Available(val update: AppUpdate) : UpdateState
+    data class Downloading(val update: AppUpdate, val progress: Float) : UpdateState
+    data class Failed(val update: AppUpdate) : UpdateState
 }
