@@ -14,7 +14,7 @@ The first release covers credit cards issued in **Bangladesh**.
 
 ## What it does
 
-- **Wallet.** Your cards are stacked like real cards in a wallet, each colored by its tier. Tap a card to see its details.
+- **Wallet.** Your cards are stacked like real cards in a wallet. Each card is drawn to look like that bank's real card for its network and tier (see [Card designs](#card-designs)). Tap a card to see its details.
 - **Card details.** Shows the BDT and USD limits, the expiry date, and the billing date along with the next date the bill is due. BDT amounts are grouped the Bangladeshi way (৳12,00,000).
 - **Adding a card.** Choose the bank, then the network, then the tier. Each list offers only what the chosen bank actually issues, so you can't pick a card that doesn't exist. A preview of the card updates as you type.
 - **Editing a card.** Use the edit button on the card's page, for example when an endorsed passport raises the USD limit, the card is upgraded or it's renewed with a new expiry date. Its bills stay with it.
@@ -67,12 +67,11 @@ The first release covers credit cards issued in **Bangladesh**.
 - **Keeping the holiday list current automatically:** a scheduled GitHub job that reads Bangladesh Bank's holiday page and updates `data/bank-calendar.json`.
 - **How each card is paid:** pay-by dates that depend on the payment method (NPSB posts instantly even on weekends; bKash and Nagad can take 3 working days).
 - **Google Play release:** with its own signing key, and without the GitHub updater, which Play doesn't allow.
-
+- **Bill formats from more banks,** as bill message samples are collected.
 - **Expiry reminders:** two months and one month before a card expires, for anyone who wants to cancel it rather than let it renew.
 - **Annual fee reminders:** shortly before each card's yearly anniversary, so you can close the card or make sure the annual fee is waived.
 - **App lock:** sign-in with a PIN or fingerprint.
 - **Security:** encrypting the saved cards, and hiding the app's contents from screenshots and the recent apps screen.
-- **Editing a saved card.**
 - **Banks outside Bangladesh.**
 
 ## Building
@@ -114,14 +113,28 @@ app/src/main/java/com/ahmadabdullah/cardholder/
 ├── reminders/                The notification reader, the daily reminder check, and the notifications
 ├── sync/                     The weekly holiday download, and updating the app from GitHub Releases
 └── ui/
-    ├── WalletViewModel.kt    Loads, adds and removes cards
-    ├── CreditCardView.kt     Draws a card: tier colors, chip, network mark
+    ├── WalletViewModel.kt    Loads cards and bills, saves changes, and offers app updates
+    ├── CreditCardView.kt     Draws a card: its design, chip, number and network mark
+    ├── cardart/              Each bank's card designs, and the finishes they're drawn with
     ├── Format.kt             BDT grouping, masked numbers, billing and expiry dates
     ├── wallet/               The stacked wallet
     ├── detail/               A card's details and latest bill, and removing it
     ├── setup/                Explaining bill reading and turning it on
-    └── addcard/              The add-card form, and CardDraft, which checks what was entered
+    └── addcard/              The add and edit form, and CardDraft, which checks what was entered
+app/src/debug/                A gallery of every card design, in debug builds only
 ```
+
+## Card designs
+
+Every bank, network and tier in the catalog has its own design in [`CardDesigns.kt`](app/src/main/java/com/ahmadabdullah/cardholder/ui/cardart/CardDesigns.kt): its colors, a finish such as brushed metal, engraved lines, silk or a planet's glowing edge, and dark writing for light cards. Each was matched by eye and by measured color to the card pictures on the bank's own website in October 2026, then drawn from scratch. **No bank artwork or logo is copied**, which keeps the app safe to publish.
+
+To see every design side by side, install a debug build and open the gallery (add `--es bank city` to show one bank):
+
+```bash
+adb shell am start -n com.ahmadabdullah.cardholder/.DesignGalleryActivity
+```
+
+The gallery fills every card with the same sample name and digits; in the app each card shows what its owner entered.
 
 ## Updating holidays
 
@@ -149,8 +162,8 @@ To add or change a bank:
 
 1. Find its current credit cards on the bank's own website.
 2. Add or edit its entry. Keep the list in alphabetical order.
-3. If you added a tier that has no color yet, give it one in `tierColors` in `CreditCardView.kt`.
-4. Run `./gradlew testDebugUnitTest`. One of the tests checks that every bank lists at least one tier for each network it offers.
+3. Give each new card a design in `CardDesigns.kt`, based on the bank's own card pictures. Check it in the design gallery.
+4. Run `./gradlew testDebugUnitTest`. The tests check that every bank lists at least one tier for each network it offers, and that every card has a design of its own.
 
 ## License
 
