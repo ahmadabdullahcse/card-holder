@@ -40,7 +40,7 @@ The first release covers credit cards issued in **Bangladesh**.
 | First 4 and last 4 digits | The middle digits are never asked for |
 | Expiry month and year | Months that have already passed can't be chosen |
 | BDT limit | Required |
-| USD limit | Enter 0 if the card has none |
+| USD limit | Optional; leave it empty if the card has none |
 | Billing date | The day of the month the statement is generated |
 
 ### How the details are checked

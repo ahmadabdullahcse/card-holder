@@ -116,6 +116,8 @@ class CardDraftTest {
         assertNull(complete.copy(lastFour = "12").toCard())
         assertNull(complete.copy(lastName = "R2D2").toCard())
         assertNotNull(complete.copy(usdLimit = "0").toCard())
+        // No USD limit: left empty, saved as 0.
+        assertEquals(0L, complete.copy(usdLimit = "").toCard()!!.usdLimit)
     }
 
     @Test

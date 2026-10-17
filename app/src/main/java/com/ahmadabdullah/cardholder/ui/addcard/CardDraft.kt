@@ -78,12 +78,9 @@ data class CardDraft(
             else -> null
         }
 
+    /** The USD limit is optional: a card without one leaves it empty, which means 0. */
     val usdLimitError: String?
-        get() = when {
-            usdLimit.isEmpty() -> "Enter the USD limit"
-            usdLimit.toLongOrNull() == null -> "Enter a whole USD amount, or 0"
-            else -> null
-        }
+        get() = if (usdLimit.isEmpty() || usdLimit.toLongOrNull() != null) null else "Enter a whole USD amount"
 
     val billingDayError: String? get() = if (billingDay == null) "Choose the billing date" else null
 
@@ -111,7 +108,7 @@ data class CardDraft(
             firstFour = firstFour,
             lastFour = lastFour,
             bdtLimit = bdtLimit.toLong(),
-            usdLimit = usdLimit.toLong(),
+            usdLimit = usdLimit.toLongOrNull() ?: 0,
             billingDay = billingDay!!,
             expiryMonth = expiryMonth!!,
             expiryYear = expiryYear!!,
@@ -166,7 +163,7 @@ data class CardDraft(
                 firstFour = card.firstFour,
                 lastFour = card.lastFour,
                 bdtLimit = card.bdtLimit.toString(),
-                usdLimit = card.usdLimit.toString(),
+                usdLimit = card.usdLimit.takeIf { it > 0 }?.toString().orEmpty(),
                 billingDay = card.billingDay,
                 expiryMonth = card.expiryMonth.takeIf { unexpired },
                 expiryYear = card.expiryYear.takeIf { unexpired },

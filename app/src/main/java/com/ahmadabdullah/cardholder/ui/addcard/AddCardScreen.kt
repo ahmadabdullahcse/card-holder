@@ -173,9 +173,9 @@ fun AddCardScreen(
                     hint = draft.bdtLimit.toLongOrNull()?.let(::formatBdt),
                 )
                 NumberField(
-                    "USD limit", draft.usdLimit, { draft = draft.copy(usdLimit = it) },
+                    "USD limit (optional)", draft.usdLimit, { draft = draft.copy(usdLimit = it) },
                     error(draft.usdLimitError, draft.usdLimit.isNotEmpty()), maxDigits = 7, prefix = "$",
-                    hint = draft.usdLimit.toLongOrNull()?.let(::formatUsd) ?: "Enter 0 if the card has no USD limit",
+                    hint = draft.usdLimit.toLongOrNull()?.let(::formatUsd) ?: "Leave empty if the card has no USD limit",
                 )
                 Dropdown(
                     label = "Billing date",
