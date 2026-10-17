@@ -151,12 +151,12 @@ private fun BillSection(bill: Bill, onSetPaid: (Boolean) -> Unit) {
         if (!bill.paid) {
             payBy.bdt?.let {
                 HorizontalDivider()
-                DetailRow("Pay taka by", formatDay(it), formatDaysLeft(ChronoUnit.DAYS.between(today, it)))
+                DetailRow("Pay BDT by", formatDay(it), formatDaysLeft(ChronoUnit.DAYS.between(today, it)))
             }
             payBy.usd?.let {
                 HorizontalDivider()
                 DetailRow(
-                    "Pay dollars by",
+                    "Pay USD by",
                     formatDay(it),
                     "${formatDaysLeft(ChronoUnit.DAYS.between(today, it))} · the bank needs time to convert",
                 )

@@ -81,7 +81,7 @@ data class CardDraft(
     val usdLimitError: String?
         get() = when {
             usdLimit.isEmpty() -> "Enter the USD limit"
-            usdLimit.toLongOrNull() == null -> "Enter a whole dollar amount, or 0"
+            usdLimit.toLongOrNull() == null -> "Enter a whole USD amount, or 0"
             else -> null
         }
 

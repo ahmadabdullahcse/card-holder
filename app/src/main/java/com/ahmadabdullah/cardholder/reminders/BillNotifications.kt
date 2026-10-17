@@ -133,7 +133,7 @@ object BillNotifications {
         return when (reminder.part) {
             BillPart.WHOLE -> "Pay ${formatBdtExact(bill.totalDue.bdt)} and ${formatUsdExact(bill.totalDue.usd)} $by."
             BillPart.BDT -> "Pay ${formatBdtExact(bill.totalDue.bdt)} $by."
-            BillPart.USD -> "Pay the ${formatUsdExact(bill.totalDue.usd)} $by, so the bank has time to convert the taka."
+            BillPart.USD -> "Pay the ${formatUsdExact(bill.totalDue.usd)} $by, so the bank has time to convert BDT to USD."
         }
     }
 
