@@ -32,31 +32,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ahmadabdullah.cardholder.data.Card
 import com.ahmadabdullah.cardholder.data.CardNetwork
+import com.ahmadabdullah.cardholder.ui.cardart.CardDesigns
+import com.ahmadabdullah.cardholder.ui.cardart.drawFinish
 
 /** The ratio of a real bank card's width to its height. */
 const val CARD_ASPECT_RATIO = 1.586f
 
 private val CardShape = RoundedCornerShape(18.dp)
 
-/** Card colors by tier, darkest edge first. */
-private fun tierColors(tier: String): Pair<Color, Color> = when (tier) {
-    "Classic" -> Color(0xFF1D3A8A) to Color(0xFF3B6FD8)
-    "Gold" -> Color(0xFF7A5A12) to Color(0xFFC9A13B)
-    "Platinum" -> Color(0xFF4A5260) to Color(0xFF98A2B3)
-    "Titanium" -> Color(0xFF2E3440) to Color(0xFF636B78)
-    "World" -> Color(0xFF0E3B43) to Color(0xFF1F7A7A)
-    "Signature" -> Color(0xFF2B1747) to Color(0xFF5B3A8E)
-    "Infinite", "World Elite", "Platinum Reserve" -> Color(0xFF0A0A0C) to Color(0xFF34343A)
-    "Blue" -> Color(0xFF0B3C7A) to Color(0xFF3A86D1)
-    "Ultramarine" -> Color(0xFF14146B) to Color(0xFF3B3BC4)
-    "Emerald" -> Color(0xFF0F4B33) to Color(0xFF2F8A5F)
-    "Diamond" -> Color(0xFF3C5A6E) to Color(0xFFA9C4D4)
-    else -> Color(0xFF263238) to Color(0xFF546E7A)
-}
-
 @Composable
 fun CreditCardView(card: Card, modifier: Modifier = Modifier, onClick: (() -> Unit)? = null) {
-    val (dark, light) = tierColors(card.tier)
+    val design = CardDesigns.forCard(card.bankId, card.network, card.tier)
+    val ink = design.textColor
+    val seed = "${card.bankId}/${card.network}/${card.tier}".hashCode()
     Box(
         modifier
             .fillMaxWidth()
@@ -64,14 +52,14 @@ fun CreditCardView(card: Card, modifier: Modifier = Modifier, onClick: (() -> Un
             .shadow(10.dp, CardShape)
             .clip(CardShape)
             .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
-            .background(Brush.linearGradient(listOf(light, dark), start = Offset.Zero, end = Offset.Infinite))
-            .padding(horizontal = 20.dp, vertical = 18.dp)
+            .background(Brush.linearGradient(design.colors, start = Offset.Zero, end = Offset.Infinite))
     ) {
-        Column(Modifier.fillMaxSize()) {
+        Canvas(Modifier.fillMaxSize()) { drawFinish(design.finish, design.accent, seed) }
+        Column(Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 18.dp)) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     card.bankName,
-                    color = Color.White,
+                    color = ink,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 17.sp,
                     maxLines = 1,
@@ -79,7 +67,7 @@ fun CreditCardView(card: Card, modifier: Modifier = Modifier, onClick: (() -> Un
                 )
                 Text(
                     card.tier.uppercase(),
-                    color = Color.White.copy(alpha = 0.8f),
+                    color = ink.copy(alpha = 0.8f),
                     fontSize = 12.sp,
                     letterSpacing = 1.5.sp,
                     fontWeight = FontWeight.Medium,
@@ -90,7 +78,7 @@ fun CreditCardView(card: Card, modifier: Modifier = Modifier, onClick: (() -> Un
             Spacer(Modifier.height(14.dp))
             Text(
                 maskedNumber(card),
-                color = Color.White,
+                color = ink,
                 fontFamily = FontFamily.Monospace,
                 fontSize = 19.sp,
                 letterSpacing = 1.sp,
@@ -99,7 +87,7 @@ fun CreditCardView(card: Card, modifier: Modifier = Modifier, onClick: (() -> Un
             Spacer(Modifier.height(4.dp))
             Text(
                 "VALID THRU  ${formatExpiry(card.expiryMonth, card.expiryYear)}",
-                color = Color.White.copy(alpha = 0.8f),
+                color = ink.copy(alpha = 0.8f),
                 fontFamily = FontFamily.Monospace,
                 fontSize = 11.sp,
             )
@@ -107,13 +95,13 @@ fun CreditCardView(card: Card, modifier: Modifier = Modifier, onClick: (() -> Un
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
                 Text(
                     card.holderName.uppercase(),
-                    color = Color.White.copy(alpha = 0.9f),
+                    color = ink.copy(alpha = 0.9f),
                     fontSize = 13.sp,
                     letterSpacing = 1.sp,
                     maxLines = 1,
                     modifier = Modifier.weight(1f),
                 )
-                NetworkMark(card.network)
+                NetworkMark(card.network, onLight = design.darkText)
             }
         }
     }
@@ -130,11 +118,13 @@ private fun Chip() {
 }
 
 @Composable
-fun NetworkMark(network: CardNetwork, modifier: Modifier = Modifier) {
+fun NetworkMark(network: CardNetwork, modifier: Modifier = Modifier, onLight: Boolean = false) {
+    // On a light card the marks are drawn dark, as the networks do on their own light cards.
+    val ink = if (onLight) Color(0xFF1A1F71) else Color.White
     when (network) {
         CardNetwork.VISA -> Text(
             "VISA",
-            color = Color.White,
+            color = ink,
             fontSize = 24.sp,
             fontWeight = FontWeight.ExtraBold,
             fontStyle = FontStyle.Italic,
@@ -155,11 +145,11 @@ fun NetworkMark(network: CardNetwork, modifier: Modifier = Modifier) {
         }
         CardNetwork.DINERS -> Row(modifier, verticalAlignment = Alignment.CenterVertically) {
             Canvas(Modifier.size(26.dp)) {
-                drawCircle(Color.White, style = Stroke(width = 2.dp.toPx()))
-                drawCircle(Color.White, radius = size.minDimension / 5)
+                drawCircle(ink, style = Stroke(width = 2.dp.toPx()))
+                drawCircle(ink, radius = size.minDimension / 5)
             }
             Spacer(Modifier.size(6.dp))
-            Text("Diners Club", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+            Text("Diners Club", color = ink, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
         }
         CardNetwork.UNIONPAY -> ColorBlocks(
             listOf(Color(0xFFE21836), Color(0xFF00447C), Color(0xFF007B84)),
