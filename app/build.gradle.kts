@@ -3,6 +3,26 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+/**
+ * The release signing key stays off GitHub: the key file lives outside the project, and its
+ * password in the macOS Keychain (see "Signing" in the README). Both can be overridden with
+ * Gradle properties, e.g. in ~/.gradle/gradle.properties on another machine.
+ */
+val releaseKeystore = file(
+    providers.gradleProperty("cardHolderKeystore").orNull
+        ?: "${System.getProperty("user.home")}/Keys/card-holder/card-holder-release.jks"
+)
+val releaseKeyAlias = providers.gradleProperty("cardHolderKeyAlias").orNull ?: "card-holder"
+val releaseKeyPassword: String? by lazy {
+    providers.gradleProperty("cardHolderKeyPassword").orNull
+        ?: runCatching {
+            providers.exec {
+                commandLine("security", "find-generic-password", "-s", "card-holder-release", "-w")
+                isIgnoreExitValue = true
+            }.standardOutput.asText.get().trim().takeIf { it.isNotEmpty() }
+        }.getOrNull()
+}
+
 android {
     namespace = "com.ahmadabdullah.cardholder"
     compileSdk {
@@ -23,11 +43,25 @@ android {
         buildConfigField("boolean", "SELF_UPDATE", "true")
     }
 
+    signingConfigs {
+        if (releaseKeystore.exists()) {
+            create("release") {
+                storeFile = releaseKeystore
+                storePassword = releaseKeyPassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
             optimization {
                 enable = false
             }
+            // Without the key on this machine, release builds come out unsigned and can't be
+            // installed; build debug instead, or set up the key as the README describes.
+            signingConfig = signingConfigs.findByName("release")
         }
     }
     compileOptions {

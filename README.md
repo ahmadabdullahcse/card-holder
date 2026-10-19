@@ -66,7 +66,7 @@ The first release covers credit cards issued in **Bangladesh**.
 
 - **Keeping the holiday list current automatically:** a scheduled GitHub job that reads Bangladesh Bank's holiday page and updates `data/bank-calendar.json`.
 - **How each card is paid:** pay-by dates that depend on the payment method (NPSB posts instantly even on weekends; bKash and Nagad can take 3 working days).
-- **Google Play release:** with its own signing key, and without the GitHub updater, which Play doesn't allow.
+- **Google Play release:** using Play App Signing with the release key as the upload key, and without the GitHub updater, which Play doesn't allow.
 - **Bill formats from more banks,** as bill message samples are collected.
 - **Expiry reminders:** two months and one month before a card expires, for anyone who wants to cancel it rather than let it renew.
 - **Annual fee reminders:** shortly before each card's yearly anniversary, so you can close the card or make sure the annual fee is waived.
@@ -140,19 +140,42 @@ The gallery fills every card with the same sample name and digits; in the app ea
 
 Edit [`data/bank-calendar.json`](data/bank-calendar.json) on GitHub: add the date to `holidays` when banks will be closed, or to `workingDays` when a Friday or Saturday is made a working day. Every installed app picks it up within a week; nothing needs to be released. The built-in list in `BankCalendar.kt` is only a fallback for phones that haven't downloaded the file yet, so it needs updating only when you release a new version anyway.
 
+## Signing
+
+Release APKs are signed with Card holder's release key. Android only updates an app with an APK signed by the same key, so **every release must use this key**: an APK signed with any other key can't update testers' apps, and they'd have to uninstall, losing their saved cards.
+
+The key is never in this repository:
+
+- The key file lives at `~/Keys/card-holder/card-holder-release.jks`, outside the project.
+- Its password is in the macOS Keychain, under the name `card-holder-release`. The build reads it from there.
+
+**Back up the key file and its password** in at least two safe places, such as a password manager and an encrypted drive. A lost key can't be recovered.
+
+To set up the key on a Mac (once):
+
+```bash
+mkdir -p ~/Keys/card-holder
+"/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/keytool" -genkeypair -keystore ~/Keys/card-holder/card-holder-release.jks -alias card-holder -keyalg RSA -keysize 4096 -validity 36500 -dname "CN=Card holder, O=ahmadabdullahcse"
+security add-generic-password -a "$USER" -s card-holder-release -w
+```
+
+Each command that needs the password asks for it; use the same password for all of them. On another computer, copy the key file over and either add the password to that Mac's Keychain the same way, or set `cardHolderKeystore` and `cardHolderKeyPassword` in `~/.gradle/gradle.properties` (never in the project's own `gradle.properties`).
+
+Without the key, debug builds still work as usual; only release builds need it.
+
 ## Releasing an update to testers
 
 Testers who installed the APK get an "Update available" banner in the app as soon as a newer GitHub release exists.
 
 1. Raise `versionName` (and `versionCode`) in `app/build.gradle.kts`, for example to 1.1 and 2.
-2. Build the APK with `./gradlew assembleDebug`.
+2. Build the signed APK with `./gradlew assembleRelease`.
 3. Publish a GitHub release whose tag is the version with a `v` in front, with the APK attached:
 
    ```bash
-   gh release create v1.1 app/build/outputs/apk/debug/app-debug.apk --title "Card holder 1.1" --notes "What changed"
+   gh release create v1.1 app/build/outputs/apk/release/app-release.apk --title "Card holder 1.1" --notes "What changed"
    ```
 
-The notes are shown in the banner. Android asks testers to confirm the install, and only accepts an APK signed with the same key as the version they have. Until the app has a release signing key, every APK must be built on the same computer.
+The notes are shown in the banner, and Android asks testers to confirm the install.
 
 ## Updating the bank list
 
