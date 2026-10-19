@@ -142,7 +142,14 @@ Edit [`data/bank-calendar.json`](data/bank-calendar.json) on GitHub: add the dat
 
 ## Signing
 
-Release APKs are signed with Card holder's release key. Android only updates an app with an APK signed by the same key, so **every release must use this key**: an APK signed with any other key can't update testers' apps, and they'd have to uninstall, losing their saved cards.
+Release APKs are signed with Card holder's release key, a locked file (`.jks`) holding a secret only the app's owner has. Signing stamps each APK with that secret, which proves it comes from the owner. Nobody opens or reads the file; the build uses it automatically.
+
+Android only updates an app with an APK carrying the same stamp, so **every release must use this key**:
+
+- **Same key:** the update installs, and testers keep their cards and bills.
+- **Any other key:** the phone refuses the update, since it could be a fake app. Testers would have to uninstall, losing their saved cards.
+
+This also means nobody else can publish an "update" to Card holder. A new key can't replace a lost one, because it would be a different stamp.
 
 The key is never in this repository:
 
