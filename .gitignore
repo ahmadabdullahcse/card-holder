@@ -19,3 +19,6 @@ local.properties
 *.keystore
 *.p12
 signing.properties
+
+# Personal instructions, kept on this computer only
+INSTRUCTIONS.md
