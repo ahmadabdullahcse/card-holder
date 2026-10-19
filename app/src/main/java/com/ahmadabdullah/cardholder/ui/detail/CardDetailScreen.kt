@@ -33,6 +33,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ahmadabdullah.cardholder.data.Card
 import com.ahmadabdullah.cardholder.data.bill.Bill
@@ -67,7 +69,7 @@ fun CardDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(card.bankName) },
+                title = { Text(card.bankName, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -158,7 +160,7 @@ private fun BillSection(bill: Bill, onSetPaid: (Boolean) -> Unit) {
                 DetailRow(
                     "Pay USD by",
                     formatDay(it),
-                    "${formatDaysLeft(ChronoUnit.DAYS.between(today, it))} · the bank needs time to convert",
+                    "${formatDaysLeft(ChronoUnit.DAYS.between(today, it))}, so the bank has time to convert",
                 )
             }
         }
@@ -194,15 +196,17 @@ private fun DetailRow(label: String, value: String, note: String? = null) {
             label,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f).padding(end = 12.dp),
         )
-        Column(horizontalAlignment = Alignment.End) {
-            Text(value, style = MaterialTheme.typography.bodyLarge)
+        // The value side gets more room, and a long note wraps under it instead of crowding the label.
+        Column(Modifier.weight(1.6f), horizontalAlignment = Alignment.End) {
+            Text(value, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.End)
             if (note != null) {
                 Text(
                     note,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.End,
                 )
             }
         }
