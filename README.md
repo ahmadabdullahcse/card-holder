@@ -59,6 +59,7 @@ The first release covers credit cards issued in **Bangladesh**.
 
 - **Only the first and last 4 digits** of the card number are kept. The app never asks for the full number, the CVV or the PIN.
 - **Cards and bills stay on the phone.** They are saved in the app's private storage and left out of Google cloud backups and device-to-device transfers.
+- **A damaged file doesn't lose everything.** Each save keeps the previous version as a backup copy in the same private storage, so if the phone dies mid-save the app opens with the last good list instead of crashing.
 - **Bill reading is opt-in.** It works only after you switch on notification access for Card holder in Android's settings. Card holder keeps nothing from a notification except a credit card bill, and from that only the amounts, the due date, the month and the few card digits the bank shows. You can switch it off at any time.
 - **Nothing is sent anywhere.** The app uses the internet only to download the holiday list and to check this repository for a new version. No card, bill or personal data ever leaves the phone, and there are no accounts and no analytics.
 

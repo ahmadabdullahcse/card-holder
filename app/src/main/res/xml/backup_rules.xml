@@ -2,6 +2,15 @@
 <!-- Used before Android 12. Saved cards and bills stay on this phone and are left out of backups. -->
 <full-backup-content>
     <exclude domain="file" path="cards.json" />
+    <exclude domain="file" path="cards.json.bak" />
+    <exclude domain="file" path="cards.json.tmp" />
+    <exclude domain="file" path="cards.json.damaged" />
     <exclude domain="file" path="bills.json" />
+    <exclude domain="file" path="bills.json.bak" />
+    <exclude domain="file" path="bills.json.tmp" />
+    <exclude domain="file" path="bills.json.damaged" />
     <exclude domain="file" path="unmatched_bills.json" />
+    <exclude domain="file" path="unmatched_bills.json.bak" />
+    <exclude domain="file" path="unmatched_bills.json.tmp" />
+    <exclude domain="file" path="unmatched_bills.json.damaged" />
 </full-backup-content>

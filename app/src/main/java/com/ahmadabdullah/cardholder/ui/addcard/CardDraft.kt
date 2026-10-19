@@ -84,8 +84,8 @@ data class CardDraft(
 
     val billingDayError: String? get() = if (billingDay == null) "Choose the billing date" else null
 
-    val expiryMonthError: String? get() = if (expiryMonth == null) "Choose the month" else null
-    val expiryYearError: String? get() = if (expiryYear == null) "Choose the year" else null
+    val expiryMonthError: String? get() = if (expiryMonth == null) "Choose the expiry month" else null
+    val expiryYearError: String? get() = if (expiryYear == null) "Choose the expiry year" else null
 
     val isComplete: Boolean
         get() = bank != null && network != null && tier != null &&

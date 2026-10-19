@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import org.json.JSONArray
+import com.ahmadabdullah.cardholder.data.JsonListFile
 import java.io.File
 
 /**
@@ -17,10 +17,11 @@ import java.io.File
  * per app, shared by the screens, the bill reader and the reminders.
  */
 class BillStore private constructor(context: Context) {
-    private val file = File(context.filesDir, FILE_NAME)
+    private val file = JsonListFile(File(context.filesDir, FILE_NAME), Bill::fromJson, Bill::toJson)
     private val lock = Mutex()
     private val _bills = MutableStateFlow<List<Bill>?>(null)
-    private val unmatchedFile = File(context.filesDir, UNMATCHED_FILE_NAME)
+    private val unmatchedFile =
+        JsonListFile(File(context.filesDir, UNMATCHED_FILE_NAME), UnmatchedBill::fromJson, UnmatchedBill::toJson)
     private val unmatchedLock = Mutex()
 
     /** The saved bills, or null until they have been read from disk. */
@@ -95,33 +96,13 @@ class BillStore private constructor(context: Context) {
         _bills.value = updated
     }
 
-    private fun read(): List<Bill> {
-        if (!file.exists()) return emptyList()
-        val array = JSONArray(file.readText())
-        return List(array.length()) { Bill.fromJson(array.getJSONObject(it)) }
-    }
+    private fun read(): List<Bill> = file.read()
 
-    private fun write(bills: List<Bill>) {
-        val array = JSONArray()
-        bills.forEach { array.put(it.toJson()) }
-        val temp = File(file.parentFile, "$FILE_NAME.tmp")
-        temp.writeText(array.toString())
-        temp.renameTo(file)
-    }
+    private fun write(bills: List<Bill>) = file.write(bills)
 
-    private suspend fun readUnmatched(): List<UnmatchedBill> = withContext(Dispatchers.IO) {
-        if (!unmatchedFile.exists()) return@withContext emptyList()
-        val array = JSONArray(unmatchedFile.readText())
-        List(array.length()) { UnmatchedBill.fromJson(array.getJSONObject(it)) }
-    }
+    private suspend fun readUnmatched(): List<UnmatchedBill> = withContext(Dispatchers.IO) { unmatchedFile.read() }
 
-    private suspend fun writeUnmatched(bills: List<UnmatchedBill>) = withContext(Dispatchers.IO) {
-        val array = JSONArray()
-        bills.forEach { array.put(it.toJson()) }
-        val temp = File(unmatchedFile.parentFile, "$UNMATCHED_FILE_NAME.tmp")
-        temp.writeText(array.toString())
-        temp.renameTo(unmatchedFile)
-    }
+    private suspend fun writeUnmatched(bills: List<UnmatchedBill>) = withContext(Dispatchers.IO) { unmatchedFile.write(bills) }
 
     companion object {
         const val FILE_NAME = "bills.json"

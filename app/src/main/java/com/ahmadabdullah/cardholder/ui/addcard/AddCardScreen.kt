@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ahmadabdullah.cardholder.data.BankCatalog
 import com.ahmadabdullah.cardholder.data.Card
@@ -143,7 +144,7 @@ fun AddCardScreen(
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Dropdown(
-                        label = "Expiry month",
+                        label = "Month",
                         options = draft.expiryMonthOptions,
                         selected = draft.expiryMonth,
                         optionLabel = { String.format(Locale.US, "%02d · %s", it, monthNames[it - 1]) },
@@ -152,7 +153,7 @@ fun AddCardScreen(
                         modifier = Modifier.weight(1f),
                     )
                     Dropdown(
-                        label = "Expiry year",
+                        label = "Year",
                         options = draft.expiryYearOptions,
                         selected = draft.expiryYear,
                         optionLabel = { it.toString() },
@@ -248,7 +249,7 @@ private fun <T> Dropdown(
             readOnly = true,
             enabled = enabled,
             singleLine = true,
-            label = { Text(label) },
+            label = { Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded && enabled) },
             isError = error != null,
             supportingText = (error ?: hint)?.let { { Text(it) } },

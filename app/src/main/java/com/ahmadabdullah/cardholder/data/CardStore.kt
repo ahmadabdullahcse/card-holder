@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import org.json.JSONArray
 import java.io.File
 
 /**
@@ -16,7 +15,7 @@ import java.io.File
  * the screens and the bill reader, so each sees the other's changes.
  */
 class CardStore private constructor(context: Context) {
-    private val file = File(context.filesDir, FILE_NAME)
+    private val file = JsonListFile(File(context.filesDir, FILE_NAME), Card::fromJson, Card::toJson)
     private val lock = Mutex()
     private val _cards = MutableStateFlow<List<Card>?>(null)
 
@@ -40,19 +39,9 @@ class CardStore private constructor(context: Context) {
         _cards.value = updated
     }
 
-    private fun read(): List<Card> {
-        if (!file.exists()) return emptyList()
-        val array = JSONArray(file.readText())
-        return List(array.length()) { Card.fromJson(array.getJSONObject(it)) }
-    }
+    private fun read(): List<Card> = file.read()
 
-    private fun write(cards: List<Card>) {
-        val array = JSONArray()
-        cards.forEach { array.put(it.toJson()) }
-        val temp = File(file.parentFile, "$FILE_NAME.tmp")
-        temp.writeText(array.toString())
-        temp.renameTo(file)
-    }
+    private fun write(cards: List<Card>) = file.write(cards)
 
     companion object {
         const val FILE_NAME = "cards.json"
