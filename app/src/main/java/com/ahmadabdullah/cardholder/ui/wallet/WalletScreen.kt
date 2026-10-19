@@ -21,6 +21,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -37,6 +38,7 @@ import com.ahmadabdullah.cardholder.data.Card
 import com.ahmadabdullah.cardholder.ui.CARD_ASPECT_RATIO
 import com.ahmadabdullah.cardholder.ui.CreditCardView
 import com.ahmadabdullah.cardholder.ui.UpdateState
+import com.ahmadabdullah.cardholder.ui.reorder.ReorderIcon
 import com.ahmadabdullah.cardholder.ui.setup.rememberBillReadingAccess
 
 /** How much of each card shows above the next one in the stack: enough for its bank and tier. */
@@ -52,6 +54,7 @@ fun WalletScreen(
     onAddCard: () -> Unit,
     onOpenCard: (Card) -> Unit,
     onSetUpReminders: () -> Unit,
+    onReorder: () -> Unit = {},
     update: UpdateState = UpdateState.None,
     onInstallUpdate: () -> Unit = {},
 ) {
@@ -61,7 +64,17 @@ fun WalletScreen(
         if (!access.isComplete) RemindersPrompt(onSetUpReminders)
     }
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Card holder") }) },
+        topBar = {
+            TopAppBar(
+                title = { Text("Card holder") },
+                actions = {
+                    // Reordering is only useful once there is more than one card.
+                    if ((cards?.size ?: 0) >= 2) {
+                        IconButton(onClick = onReorder) { Icon(ReorderIcon, contentDescription = "Reorder cards") }
+                    }
+                },
+            )
+        },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = onAddCard,

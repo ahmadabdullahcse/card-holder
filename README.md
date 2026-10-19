@@ -18,6 +18,7 @@ The first release covers credit cards issued in **Bangladesh**.
 - **Card details.** Shows the BDT and USD limits, the expiry date, and the billing date along with the next date the bill is due. BDT amounts are grouped the Bangladeshi way (৳12,00,000).
 - **Adding a card.** Choose the bank, then the network, then the tier. Each list offers only what the chosen bank actually issues, so you can't pick a card that doesn't exist. A preview of the card updates as you type.
 - **Editing a card.** Use the edit button on the card's page, for example when an endorsed passport raises the USD limit, the card is upgraded or it's renewed with a new expiry date. Its bills stay with it.
+- **Reordering cards.** The arrows button in the title bar opens a list where cards can be dragged by their handle, or moved one place with the up and down arrows. The new order is saved when you tap Done.
 - **Removing a card.** Use the delete button on the card's page. It asks before removing.
 - **Bill reminders.** Card holder reads the bill your bank sends each month (by SMS or app notification), saves it on the matching card, and reminds you 7, 5, 3, 2 and 1 days before the last safe day to pay. On that day itself an urgent "Pay today" reminder arrives with a red warning. Mark the bill as paid to stop the reminders.
 - **Bills for cards you haven't added.** Card holder offers to add the card, with the bank, the network and whatever digits the bill showed already filled in. Once the card is saved, the bill appears on it.
@@ -120,6 +121,7 @@ app/src/main/java/com/ahmadabdullah/cardholder/
     ├── Format.kt             BDT grouping, masked numbers, billing and expiry dates
     ├── wallet/               The stacked wallet
     ├── detail/               A card's details and latest bill, and removing it
+    ├── reorder/              Putting the cards in the order you want them
     ├── setup/                Explaining bill reading and turning it on
     └── addcard/              The add and edit form, and CardDraft, which checks what was entered
 app/src/debug/                A gallery of every card design, in debug builds only

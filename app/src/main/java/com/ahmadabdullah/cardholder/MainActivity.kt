@@ -20,6 +20,7 @@ import com.ahmadabdullah.cardholder.ui.WalletViewModel
 import com.ahmadabdullah.cardholder.ui.addcard.AddCardScreen
 import com.ahmadabdullah.cardholder.ui.addcard.CardDraft
 import com.ahmadabdullah.cardholder.ui.detail.CardDetailScreen
+import com.ahmadabdullah.cardholder.ui.reorder.ReorderCardsScreen
 import com.ahmadabdullah.cardholder.ui.setup.BillReadingSetupScreen
 import com.ahmadabdullah.cardholder.ui.theme.CardHolderTheme
 import com.ahmadabdullah.cardholder.ui.wallet.WalletScreen
@@ -50,6 +51,7 @@ private const val ADD_CARD = "add"
 private const val ADD_FROM_BILL = "add-from:"
 private const val EDIT_CARD = "edit:"
 private const val SET_UP_REMINDERS = "reminders"
+private const val REORDER = "reorder"
 
 @Composable
 private fun CardHolderApp(openScreen: String?, viewModel: WalletViewModel = viewModel()) {
@@ -68,10 +70,21 @@ private fun CardHolderApp(openScreen: String?, viewModel: WalletViewModel = view
             onAddCard = { screen = ADD_CARD },
             onOpenCard = { screen = it.id },
             onSetUpReminders = { screen = SET_UP_REMINDERS },
+            onReorder = { screen = REORDER },
             update = update,
             onInstallUpdate = viewModel::installUpdate,
         )
         SET_UP_REMINDERS -> BillReadingSetupScreen(onBack = { screen = null })
+        REORDER -> cards?.let { saved ->
+            ReorderCardsScreen(
+                cards = saved,
+                onBack = { screen = null },
+                onDone = { ids ->
+                    viewModel.reorder(ids)
+                    screen = null
+                },
+            )
+        }
         ADD_CARD -> AddCardScreen(
             onBack = { screen = null },
             onSave = { card ->

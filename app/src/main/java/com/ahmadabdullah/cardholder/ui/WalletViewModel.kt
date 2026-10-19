@@ -90,6 +90,10 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
     /** A bill that arrived for a card that isn't saved, to start the add-card form from. */
     suspend fun unmatchedBill(id: String): UnmatchedBill? = billStore.unmatched(id)
 
+    fun reorder(ids: List<String>) {
+        viewModelScope.launch { cardStore.reorder(ids) }
+    }
+
     fun delete(id: String) {
         viewModelScope.launch {
             cardStore.delete(id)

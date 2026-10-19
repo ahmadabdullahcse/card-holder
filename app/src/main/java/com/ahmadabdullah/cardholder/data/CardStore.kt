@@ -31,6 +31,12 @@ class CardStore private constructor(context: Context) {
     /** Replaces the saved card that has the same id. */
     suspend fun replace(card: Card) = update { cards -> cards.map { if (it.id == card.id) card else it } }
 
+    /** Puts the cards in the order of [ids]. Cards missing from it keep their place at the end. */
+    suspend fun reorder(ids: List<String>) = update { cards ->
+        val position = ids.withIndex().associate { (index, id) -> id to index }
+        cards.sortedBy { position[it.id] ?: Int.MAX_VALUE }
+    }
+
     suspend fun delete(id: String) = update { cards -> cards.filterNot { it.id == id } }
 
     private suspend fun update(change: (List<Card>) -> List<Card>) = lock.withLock {
