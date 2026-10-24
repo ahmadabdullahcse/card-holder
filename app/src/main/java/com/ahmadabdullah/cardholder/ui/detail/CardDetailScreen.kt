@@ -1,5 +1,6 @@
 package com.ahmadabdullah.cardholder.ui.detail
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import com.ahmadabdullah.cardholder.data.Card
 import com.ahmadabdullah.cardholder.data.bill.Bill
 import com.ahmadabdullah.cardholder.data.bill.Due
-import com.ahmadabdullah.cardholder.reminders.REMINDER_DAYS_TEXT
 import com.ahmadabdullah.cardholder.ui.CreditCardView
 import com.ahmadabdullah.cardholder.ui.formatBdt
 import com.ahmadabdullah.cardholder.ui.formatBdtExact
@@ -167,14 +167,8 @@ private fun BillSection(bill: Bill, onSetPaid: (Boolean) -> Unit) {
         HorizontalDivider()
         Row(
             Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End,
         ) {
-            Text(
-                if (bill.paid) "Paid. No more reminders for this bill." else "Reminders come $REMINDER_DAYS_TEXT.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.weight(1f),
-            )
             if (bill.paid) {
                 TextButton(onClick = { onSetPaid(false) }) { Text("Not paid") }
             } else {
