@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.ahmadabdullah.cardholder.data.Card
 import com.ahmadabdullah.cardholder.data.CardStore
 import com.ahmadabdullah.cardholder.data.bill.Bill
+import com.ahmadabdullah.cardholder.data.bill.BillImport
+import com.ahmadabdullah.cardholder.data.bill.BillParser
 import com.ahmadabdullah.cardholder.data.bill.BillStore
 import com.ahmadabdullah.cardholder.data.bill.UnmatchedBill
 import com.ahmadabdullah.cardholder.reminders.ReminderWorker
@@ -89,6 +91,17 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 
     /** A bill that arrived for a card that isn't saved, to start the add-card form from. */
     suspend fun unmatchedBill(id: String): UnmatchedBill? = billStore.unmatched(id)
+
+    /**
+     * Reads a message shared to Card holder from another app, such as a bill SMS the
+     * SMS app didn't show a notification for. Null if it isn't a bill Card holder can read.
+     */
+    suspend fun importShared(text: String): BillImport? {
+        val message = BillParser.parse(text) ?: return null
+        val saved = BillImport.save(getApplication(), "", text, message)
+        if (saved is BillImport.Saved && saved.isNew) ReminderWorker.checkNow(getApplication())
+        return saved
+    }
 
     fun reorder(ids: List<String>) {
         viewModelScope.launch { cardStore.reorder(ids) }

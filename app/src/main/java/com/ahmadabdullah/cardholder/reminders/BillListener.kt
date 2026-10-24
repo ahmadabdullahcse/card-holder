@@ -9,13 +9,9 @@ import android.os.Parcelable
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import androidx.core.app.NotificationManagerCompat
-import com.ahmadabdullah.cardholder.data.CardStore
-import com.ahmadabdullah.cardholder.data.bill.Bill
-import com.ahmadabdullah.cardholder.data.bill.BillMatcher
+import com.ahmadabdullah.cardholder.data.bill.BillImport
 import com.ahmadabdullah.cardholder.data.bill.BillMessage
 import com.ahmadabdullah.cardholder.data.bill.BillParser
-import com.ahmadabdullah.cardholder.data.bill.BillStore
-import com.ahmadabdullah.cardholder.data.bill.UnmatchedBill
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -53,19 +49,12 @@ class BillListener : NotificationListenerService() {
     }
 
     private suspend fun save(sender: String, text: String, message: BillMessage) {
-        val cardStore = CardStore.get(this)
-        cardStore.load()
-        val card = BillMatcher.cardFor(message, cardStore.cards.value.orEmpty(), "$sender $text")
-        if (card == null) {
-            val unmatched = UnmatchedBill(message, BillMatcher.bankNamedIn("$sender $text")?.id)
-            if (BillStore.get(this).saveUnmatched(unmatched)) BillNotifications.showAddCardPrompt(this, unmatched)
-            return
-        }
-
-        val bill = Bill.from(message, card.id)
-        if (BillStore.get(this).save(bill)) {
-            BillNotifications.showNewBill(this, card, bill)
-            ReminderWorker.checkNow(this)
+        when (val saved = BillImport.save(this, sender, text, message)) {
+            is BillImport.Unmatched -> if (saved.isNew) BillNotifications.showAddCardPrompt(this, saved.bill)
+            is BillImport.Saved -> if (saved.isNew) {
+                BillNotifications.showNewBill(this, saved.card, saved.bill)
+                ReminderWorker.checkNow(this)
+            }
         }
     }
 

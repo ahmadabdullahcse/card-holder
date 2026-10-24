@@ -1,6 +1,8 @@
 package com.ahmadabdullah.cardholder
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -12,8 +14,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ahmadabdullah.cardholder.data.bill.BillImport
 import com.ahmadabdullah.cardholder.reminders.BillNotifications
 import com.ahmadabdullah.cardholder.reminders.ReminderWorker
 import com.ahmadabdullah.cardholder.ui.WalletViewModel
@@ -34,9 +38,12 @@ class MainActivity : ComponentActivity() {
         // A reminder opens straight onto its card; a bill for an unsaved card opens the form.
         val openScreen = intent.getStringExtra(EXTRA_UNMATCHED_BILL_ID)?.let { ADD_FROM_BILL + it }
             ?: intent.getStringExtra(EXTRA_CARD_ID)
+        // A message shared from another app, read once (not again when the screen turns).
+        val sharedText = intent.takeIf { savedInstanceState == null && it.action == Intent.ACTION_SEND }
+            ?.getStringExtra(Intent.EXTRA_TEXT)
         setContent {
             CardHolderTheme {
-                CardHolderApp(openScreen)
+                CardHolderApp(openScreen, sharedText)
             }
         }
     }
@@ -54,7 +61,7 @@ private const val SET_UP_REMINDERS = "reminders"
 private const val REORDER = "reorder"
 
 @Composable
-private fun CardHolderApp(openScreen: String?, viewModel: WalletViewModel = viewModel()) {
+private fun CardHolderApp(openScreen: String?, sharedText: String?, viewModel: WalletViewModel = viewModel()) {
     val cards by viewModel.cards.collectAsStateWithLifecycle()
     val bills by viewModel.bills.collectAsStateWithLifecycle()
     val update by viewModel.update.collectAsStateWithLifecycle()
@@ -63,6 +70,24 @@ private fun CardHolderApp(openScreen: String?, viewModel: WalletViewModel = view
     var screen by rememberSaveable { mutableStateOf(openScreen) }
 
     BackHandler(enabled = screen != null) { screen = null }
+
+    // A bill shared to Card holder opens its card, or the add-card form if the card isn't saved.
+    val context = LocalContext.current
+    LaunchedEffect(sharedText) {
+        if (sharedText == null) return@LaunchedEffect
+        val message = when (val saved = viewModel.importShared(sharedText)) {
+            null -> "This isn't a credit card bill Card holder can read"
+            is BillImport.Saved -> {
+                screen = saved.card.id
+                if (saved.isNew) "Bill added" else "This bill was already added"
+            }
+            is BillImport.Unmatched -> {
+                screen = ADD_FROM_BILL + saved.bill.id
+                "Add this card to keep its bill"
+            }
+        }
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+    }
 
     when (val current = screen) {
         null -> WalletScreen(
