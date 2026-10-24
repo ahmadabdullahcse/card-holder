@@ -11,6 +11,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import com.ahmadabdullah.cardholder.data.JsonListFile
 import java.io.File
+import java.time.LocalDate
 
 /**
  * Keeps the bills in a JSON file in the app's private storage, next to the cards. There is one
@@ -83,6 +84,18 @@ class BillStore private constructor(context: Context) {
         }
         claimed.forEach { save(Bill.from(it.message, card.id)) }
         return claimed.isNotEmpty()
+    }
+
+    /**
+     * Forgets bills whose due date was before [today], including ones waiting for their card to be
+     * added. Their reminders are all done, and the bank's next bill takes their place.
+     */
+    suspend fun removePast(today: LocalDate = LocalDate.now()) {
+        if (load().any { it.dueDate < today }) update { bills -> bills.filterNot { it.dueDate < today } }
+        unmatchedLock.withLock {
+            val kept = readUnmatched()
+            if (kept.any { it.message.dueDate < today }) writeUnmatched(kept.filterNot { it.message.dueDate < today })
+        }
     }
 
     suspend fun deleteForCard(cardId: String) = update { bills -> bills.filterNot { it.cardId == cardId } }

@@ -27,6 +27,7 @@ class ReminderWorker(context: Context, params: WorkerParameters) : CoroutineWork
         cardStore.load()
         val cards = cardStore.cards.value.orEmpty()
         val today = LocalDate.now()
+        billStore.removePast(today)
 
         for (bill in billStore.load()) {
             val card = cards.firstOrNull { it.id == bill.cardId } ?: continue

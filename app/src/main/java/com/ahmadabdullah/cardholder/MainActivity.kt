@@ -29,6 +29,7 @@ import com.ahmadabdullah.cardholder.ui.reorder.ReorderCardsScreen
 import com.ahmadabdullah.cardholder.ui.setup.BillReadingSetupScreen
 import com.ahmadabdullah.cardholder.ui.theme.CardHolderTheme
 import com.ahmadabdullah.cardholder.ui.wallet.WalletScreen
+import java.time.LocalDate
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -159,7 +160,8 @@ private fun CardHolderApp(openScreen: String?, sharedText: String?, viewModel: W
                 } else {
                     CardDetailScreen(
                         card = card,
-                        bill = bills?.filter { it.cardId == card.id }?.maxByOrNull { it.dueDate },
+                        // A bill stops showing once its due date has passed, even if the app stays open.
+                        bill = bills?.filter { it.cardId == card.id && it.dueDate >= LocalDate.now() }?.maxByOrNull { it.dueDate },
                         onBack = { screen = null },
                         onEdit = { screen = EDIT_CARD + card.id },
                         onDelete = {

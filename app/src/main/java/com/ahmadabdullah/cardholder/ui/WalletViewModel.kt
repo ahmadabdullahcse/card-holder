@@ -37,7 +37,7 @@ class WalletViewModel(application: Application) : AndroidViewModel(application) 
 
     init {
         viewModelScope.launch { cardStore.load() }
-        viewModelScope.launch { billStore.load() }
+        viewModelScope.launch { billStore.removePast() }
         viewModelScope.launch(Dispatchers.IO) {
             AppUpdater.check()?.let { _update.value = UpdateState.Available(it) }
         }
