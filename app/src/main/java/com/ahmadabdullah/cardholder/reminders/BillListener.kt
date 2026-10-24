@@ -55,6 +55,7 @@ class BillListener : NotificationListenerService() {
                 BillNotifications.showNewBill(this, saved.card, saved.bill)
                 ReminderWorker.checkNow(this)
             }
+            is BillImport.Past -> Unit
         }
     }
 

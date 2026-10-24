@@ -21,6 +21,7 @@ import com.ahmadabdullah.cardholder.data.bill.BillImport
 import com.ahmadabdullah.cardholder.reminders.BillNotifications
 import com.ahmadabdullah.cardholder.reminders.ReminderWorker
 import com.ahmadabdullah.cardholder.ui.WalletViewModel
+import com.ahmadabdullah.cardholder.ui.formatDay
 import com.ahmadabdullah.cardholder.ui.addcard.AddCardScreen
 import com.ahmadabdullah.cardholder.ui.addcard.CardDraft
 import com.ahmadabdullah.cardholder.ui.detail.CardDetailScreen
@@ -77,6 +78,7 @@ private fun CardHolderApp(openScreen: String?, sharedText: String?, viewModel: W
         if (sharedText == null) return@LaunchedEffect
         val message = when (val saved = viewModel.importShared(sharedText)) {
             null -> "This isn't a credit card bill Card holder can read"
+            is BillImport.Past -> "This bill was due on ${formatDay(saved.message.dueDate)}, so it wasn't added"
             is BillImport.Saved -> {
                 screen = saved.card.id
                 if (saved.isNew) "Bill added" else "This bill was already added"

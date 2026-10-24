@@ -3,11 +3,13 @@ package com.ahmadabdullah.cardholder
 import com.ahmadabdullah.cardholder.data.Card
 import com.ahmadabdullah.cardholder.data.CardNetwork
 import com.ahmadabdullah.cardholder.data.bill.Bill
+import com.ahmadabdullah.cardholder.data.bill.BillImport
 import com.ahmadabdullah.cardholder.data.bill.BillMatcher
 import com.ahmadabdullah.cardholder.data.bill.BillParser
 import com.ahmadabdullah.cardholder.data.bill.BillPart
 import com.ahmadabdullah.cardholder.data.bill.Reminders
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -90,5 +92,14 @@ class RemindersTest {
         // EBL's own message names no bank, and plain words aren't banks.
         assertNull(BillMatcher.bankNamedIn("Monthly bill 455120****6630 SEP2026"))
         assertNull(BillMatcher.bankNamedIn("Pay one bill at the bank"))
+    }
+
+    @Test
+    fun billsDueBeforeTodayAreNotSaved() {
+        val message = BillParser.parse(
+            "Monthly bill 412300****2209 SEP2026; Total Due: BDT 9876.54, Min Due: BDT 2100.00, Last Pmt: 10-OCT-26.",
+        )!!
+        assertTrue(BillImport.isPast(message, today = date("2026-10-11")))
+        assertFalse(BillImport.isPast(message, today = date("2026-10-10")))
     }
 }
