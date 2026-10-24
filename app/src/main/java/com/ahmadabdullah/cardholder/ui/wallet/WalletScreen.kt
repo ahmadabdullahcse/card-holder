@@ -22,7 +22,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
@@ -37,7 +36,6 @@ import androidx.compose.ui.unit.min
 import com.ahmadabdullah.cardholder.data.Card
 import com.ahmadabdullah.cardholder.ui.CARD_ASPECT_RATIO
 import com.ahmadabdullah.cardholder.ui.CreditCardView
-import com.ahmadabdullah.cardholder.ui.UpdateState
 import com.ahmadabdullah.cardholder.ui.reorder.ReorderIcon
 import com.ahmadabdullah.cardholder.ui.setup.rememberBillReadingAccess
 
@@ -55,12 +53,9 @@ fun WalletScreen(
     onOpenCard: (Card) -> Unit,
     onSetUpReminders: () -> Unit,
     onReorder: () -> Unit = {},
-    update: UpdateState = UpdateState.None,
-    onInstallUpdate: () -> Unit = {},
 ) {
     val access = rememberBillReadingAccess()
     val prompts: @Composable () -> Unit = {
-        UpdatePrompt(update, onInstallUpdate)
         if (!access.isComplete) RemindersPrompt(onSetUpReminders)
     }
     Scaffold(
@@ -87,10 +82,7 @@ fun WalletScreen(
             cards == null -> Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
-            cards.isEmpty() -> Column(Modifier.padding(padding)) {
-                if (update != UpdateState.None) Box(Modifier.padding(16.dp)) { UpdatePrompt(update, onInstallUpdate) }
-                EmptyWallet()
-            }
+            cards.isEmpty() -> Column(Modifier.padding(padding)) { EmptyWallet() }
             else -> CardStack(
                 cards,
                 onOpenCard,
@@ -126,49 +118,6 @@ private fun CardStack(
                 cards.forEachIndexed { index, card ->
                     CreditCardView(card, Modifier.offset(y = StackPeek * index), onClick = { onOpenCard(card) })
                 }
-            }
-        }
-    }
-}
-
-/** Offers a newer version from GitHub, and shows its download. */
-@Composable
-private fun UpdatePrompt(update: UpdateState, onInstall: () -> Unit) {
-    val (version, notes) = when (update) {
-        UpdateState.None -> return
-        is UpdateState.Available -> update.update.version to update.update.notes
-        is UpdateState.Downloading -> update.update.version to update.update.notes
-        is UpdateState.Failed -> update.update.version to update.update.notes
-    }
-    OutlinedCard(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp)) {
-            Text("Version $version is available", style = MaterialTheme.typography.titleMedium)
-            if (notes.isNotBlank()) {
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    notes.trim(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 4,
-                )
-            }
-            Spacer(Modifier.height(12.dp))
-            when (update) {
-                is UpdateState.Downloading -> {
-                    LinearProgressIndicator(progress = { update.progress }, modifier = Modifier.fillMaxWidth())
-                    Spacer(Modifier.height(4.dp))
-                    Text("Downloading…", style = MaterialTheme.typography.bodySmall)
-                }
-                is UpdateState.Failed -> {
-                    Text(
-                        "The download didn't finish. Check the connection and try again.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Button(onClick = onInstall) { Text("Try again") }
-                }
-                else -> Button(onClick = onInstall) { Text("Update") }
             }
         }
     }

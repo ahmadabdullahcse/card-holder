@@ -1,14 +1,15 @@
 package com.ahmadabdullah.cardholder
 
 import android.app.Application
-import com.ahmadabdullah.cardholder.sync.CalendarSync
+import androidx.work.WorkManager
+import java.io.File
 
 class CardHolderApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        // Before anything works out a pay-by date: the screens, the bill reader or a reminder.
-        CalendarSync.loadSaved(this)
-        // The first download runs as soon as the phone is online, then once a week.
-        CalendarSync.scheduleWeekly(this)
+        // Versions before 1.1 downloaded the holiday list each week. Card holder is offline now,
+        // so that job and the list it saved are cleared from phones that had them.
+        WorkManager.getInstance(this).cancelUniqueWork("weekly_calendar_sync")
+        File(filesDir, "bank_calendar.json").delete()
     }
 }

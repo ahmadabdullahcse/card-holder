@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- The only file shared with Android's installer: an update downloaded from GitHub. -->
-<paths>
-    <cache-path name="updates" path="updates/" />
-</paths>

@@ -5,11 +5,8 @@
     <!-- Bill reminders and the "bill saved" notice -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
-    <!-- Downloads the bank holiday list and checks GitHub for updates. Nothing is ever sent. -->
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- Installs updates downloaded from GitHub, once the user allows it. Not allowed on Google Play. -->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- Card holder is offline. The background-job library asks for this to check the connection; the daily reminder doesn't need it. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
 
     <application
         android:name=".CardHolderApplication"
@@ -52,17 +49,6 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
-
-        <!-- Lets Android's installer read an update the app downloaded -->
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.updates"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/update_paths" />
-        </provider>
     </application>
 
 </manifest>

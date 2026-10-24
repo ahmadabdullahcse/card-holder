@@ -102,20 +102,6 @@ class BillParserTest {
     }
 
     @Test
-    fun aDownloadedCalendarAddsHolidaysAndWorkingDays() {
-        try {
-            // A holiday announced after release, and a Friday made a working day.
-            BankCalendar.useDownloaded(setOf(date("2026-11-10")), setOf(date("2026-11-13")))
-            assertFalse(BankCalendar.isOpen(date("2026-11-10")))
-            assertTrue(BankCalendar.isOpen(date("2026-11-13")))
-            // The built-in holidays still apply.
-            assertFalse(BankCalendar.isOpen(date("2026-12-16")))
-        } finally {
-            BankCalendar.useDownloaded(emptySet(), emptySet())
-        }
-    }
-
-    @Test
     fun payByDatesForTheSampleBills() {
         // UCB is due Tuesday 13 October. The taka is fine that day, but the dollars need two
         // banking days to convert, so pay by Sunday 11 October.

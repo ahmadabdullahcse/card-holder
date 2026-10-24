@@ -66,7 +66,6 @@ private const val REORDER = "reorder"
 private fun CardHolderApp(openScreen: String?, sharedText: String?, viewModel: WalletViewModel = viewModel()) {
     val cards by viewModel.cards.collectAsStateWithLifecycle()
     val bills by viewModel.bills.collectAsStateWithLifecycle()
-    val update by viewModel.update.collectAsStateWithLifecycle()
     // The wallet when null. Otherwise the add-card form (empty, or filled from a bill), the
     // edit form for a card, the reminders setup, or the id of the card being viewed.
     var screen by rememberSaveable { mutableStateOf(openScreen) }
@@ -99,8 +98,6 @@ private fun CardHolderApp(openScreen: String?, sharedText: String?, viewModel: W
             onOpenCard = { screen = it.id },
             onSetUpReminders = { screen = SET_UP_REMINDERS },
             onReorder = { screen = REORDER },
-            update = update,
-            onInstallUpdate = viewModel::installUpdate,
         )
         SET_UP_REMINDERS -> BillReadingSetupScreen(onBack = { screen = null })
         REORDER -> cards?.let { saved ->

@@ -37,10 +37,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        // Updating from GitHub Releases, for testers. Google Play doesn't allow it: set this to
-        // false, and drop REQUEST_INSTALL_PACKAGES from the manifest, for a Play release.
-        buildConfigField("boolean", "SELF_UPDATE", "true")
     }
 
     signingConfigs {

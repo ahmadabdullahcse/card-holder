@@ -25,7 +25,7 @@ Made for credit cards issued in **Bangladesh**.
 - Only the **first and last 4 digits** of a card are kept. Card holder never asks for the full number, the CVV or the PIN.
 - **Everything stays on your phone.** Cards and bills are left out of cloud backups, and no card or bill data is ever sent anywhere.
 - **Reading bills is your choice.** It only works after you turn on notification access, and Card holder keeps nothing but credit card bills from what it reads.
-- The internet is used only to download the bank holiday list and to check for app updates.
+- **Card holder works fully offline.** It has no internet permission, so it can't send anything anywhere. Updates come through Google Play.
 
 ## Installing
 

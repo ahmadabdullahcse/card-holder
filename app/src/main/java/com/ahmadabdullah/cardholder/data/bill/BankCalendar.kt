@@ -8,9 +8,8 @@ import java.time.LocalDate
  * Bangladesh Bank announces each year, except for the odd Friday or Saturday the government
  * makes a working day in exchange for a holiday.
  *
- * The lists here are built in. The app also downloads data/bank-calendar.json from the GitHub
- * repository each week (see CalendarSync), so holidays announced later arrive without a new
- * release; [useDownloaded] adds them to these.
+ * The lists are built in; Card holder never goes online. Holidays announced later arrive with an
+ * app update.
  */
 object BankCalendar {
     /**
@@ -56,23 +55,14 @@ object BankCalendar {
     ).map(LocalDate::parse).toSet()
 
     /** Fridays and Saturdays declared working days, usually in exchange for a holiday. */
-    private val builtInWorkingDays: Set<LocalDate> = listOf(
+    private val workingDays: Set<LocalDate> = listOf(
         "2026-10-17", // In exchange for Thursday 22 October, for Durga Puja
     ).map(LocalDate::parse).toSet()
 
-    @Volatile private var downloadedHolidays: Set<LocalDate> = emptySet()
-    @Volatile private var downloadedWorkingDays: Set<LocalDate> = emptySet()
-
-    /** Adds the holidays and working days from the downloaded calendar to the built-in ones. */
-    fun useDownloaded(holidays: Set<LocalDate>, workingDays: Set<LocalDate>) {
-        downloadedHolidays = holidays
-        downloadedWorkingDays = workingDays
-    }
-
     fun isOpen(date: LocalDate): Boolean = when {
-        date in builtInWorkingDays || date in downloadedWorkingDays -> true
+        date in workingDays -> true
         date.dayOfWeek == DayOfWeek.FRIDAY || date.dayOfWeek == DayOfWeek.SATURDAY -> false
-        else -> date !in holidays && date !in downloadedHolidays
+        else -> date !in holidays
     }
 
     /** [date] if banks are open that day, otherwise the last day before it that they are. */
