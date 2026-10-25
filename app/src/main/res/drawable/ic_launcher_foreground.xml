@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Card holder's icon: two stacked cards, a blue one behind a gold one with a chip, like the
-  wallet's stack. Everything stays inside the 66dp circle Android keeps for any icon shape.
+  Card holder's icon: two familiar payment cards. The front card has a chip and a compact Visa
+  wordmark; the back card's red and orange circles nod to another network. The whole mark stays
+  inside Android's 66dp safe circle.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
@@ -9,34 +10,31 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- The card behind -->
+    <!-- Indigo card behind -->
     <path
-        android:pathData="M38,34h38a4,4 0,0 1,4 4v22a4,4 0,0 1,-4 4h-38a4,4 0,0 1,-4 -4v-22a4,4 0,0 1,4 -4z"
-        android:fillColor="#FF5B8DEF" />
-    <!-- Its shadow on the front card -->
+        android:pathData="M34,30h47a6,6 0,0 1,6 6v24a6,6 0,0 1,-6 6h-47a6,6 0,0 1,-6 -6v-24a6,6 0,0 1,6 -6z"
+        android:fillColor="#FF5D82E8" />
+    <!-- A small Mastercard-style mark, visible at the edge of the back card. -->
     <path
-        android:pathData="M30,45h40a4,4 0,0 1,4 4v1h-48v-1a4,4 0,0 1,4 -4z"
-        android:fillColor="#40000000" />
-    <!-- The gold card in front -->
-    <path android:pathData="M32,44h38a4,4 0,0 1,4 4v22a4,4 0,0 1,-4 4h-38a4,4 0,0 1,-4 -4v-22a4,4 0,0 1,4 -4z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:type="linear"
-                android:startX="28"
-                android:startY="44"
-                android:endX="74"
-                android:endY="74">
-                <item android:color="#FFF6D57E" android:offset="0" />
-                <item android:color="#FFC9952E" android:offset="1" />
-            </gradient>
-        </aapt:attr>
-    </path>
-    <!-- Chip -->
+        android:pathData="M78,54a5,5 0,1 0,0 10a5,5 0,1 0,0 -10z"
+        android:fillColor="#FFEA2B2B" />
     <path
-        android:pathData="M34.5,52h7a1.5,1.5 0,0 1,1.5 1.5v4a1.5,1.5 0,0 1,-1.5 1.5h-7a1.5,1.5 0,0 1,-1.5 -1.5v-4a1.5,1.5 0,0 1,1.5 -1.5z"
-        android:fillColor="#FF8A6420" />
-    <!-- Card number -->
+        android:pathData="M84,54a5,5 0,1 0,0 10a5,5 0,1 0,0 -10z"
+        android:fillColor="#FFFFA526" />
+    <!-- Pale front card. -->
     <path
-        android:pathData="M33,64h7v2.2h-7zM42.5,64h7v2.2h-7zM52,64h7v2.2h-7z"
-        android:fillColor="#B35E4314" />
+        android:pathData="M23,42h48a6,6 0,0 1,6 6v25a6,6 0,0 1,-6 6h-48a6,6 0,0 1,-6 -6v-25a6,6 0,0 1,6 -6z"
+        android:fillColor="#FFF3F7FF" />
+    <!-- Amber EMV chip. -->
+    <path
+        android:pathData="M27,50h10a2,2 0,0 1,2 2v7a2,2 0,0 1,-2 2h-10a2,2 0,0 1,-2 -2v-7a2,2 0,0 1,2 -2z"
+        android:fillColor="#FFFFB52B" />
+    <path
+        android:pathData="M30,50v11M34,50v11M25,54h14M25,58h14"
+        android:strokeColor="#FFFFE1A0"
+        android:strokeWidth="0.8" />
+    <!-- Small, custom-drawn VISA wordmark. -->
+    <path
+        android:pathData="M48,67h2.6l2,6.5l2,-6.5h2.6l-3.2,9h-2.8zM58,67h2.4l-1.3,9h-2.4zM62,67.2q1.6,-0.5 3.8,-0.5q2.7,0 3.4,1.2l-1,1.8q-1.4,-0.7 -2.8,-0.7q-1.1,0 -1.1,0.6q0,0.5 1.7,0.9q2.5,0.6 2.5,2.4q0,3 -4.6,3q-2.3,0 -3.7,-0.9l1,-1.8q1.5,0.8 2.9,0.8q1.6,0 1.6,-0.7q0,-0.5 -1.6,-0.9q-2.7,-0.7 -2.7,-2.5q0,-1.8 1.4,-2.7zM72.2,76l2.9,-9h2.8l3,9h-2.5l-0.5,-1.6h-3.1l-0.5,1.6h-2.5zM75.3,72.5h1.9l-1,-3.1z"
+        android:fillColor="#FF102F75" />
 </vector>
