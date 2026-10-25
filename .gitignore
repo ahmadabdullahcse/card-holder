@@ -23,3 +23,6 @@ signing.properties
 # Personal instructions, kept on this computer only
 INSTRUCTIONS.md
 HANDOVER.md
+
+# Android Studio project settings
+.idea/
