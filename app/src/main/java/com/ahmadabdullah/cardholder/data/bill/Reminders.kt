@@ -54,11 +54,13 @@ object BillMatcher {
     /**
      * Whether the text names the bank: by its short code in capitals (UCB, EBL, CITY) or the first
      * word of its name as written (City, Eastern, Dutch-Bangla). Letter case counts, so ONE Bank
-     * isn't found in every "one". "Bank" alone, as in Bank Asia, would match every bank.
+     * isn't found in every "one". "Bank" alone, as in Bank Asia, would match every bank. A link
+     * to the bank's site counts too, such as BRAC's "s.bracbank.com" in a shared message.
      */
     private fun mentionsBank(text: String, bankId: String): Boolean {
         val bank = BankCatalog.bank(bankId) ?: return false
         val names = setOf(bank.id.replace('_', ' ').uppercase(), bank.name.substringBefore(' ')) - setOf("Bank")
-        return names.any { Regex("""\b${Regex.escape(it)}\b""").containsMatchIn(text) }
+        return names.any { Regex("""\b${Regex.escape(it)}\b""").containsMatchIn(text) } ||
+            text.contains("${bank.id}bank.com", ignoreCase = true)
     }
 }

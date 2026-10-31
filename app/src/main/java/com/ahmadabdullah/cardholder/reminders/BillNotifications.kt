@@ -124,6 +124,24 @@ object BillNotifications {
         )
     }
 
+    /**
+     * Takes down the notifications about [bills] (the "bill saved" notice and the reminder) once
+     * the user has seen them in Card holder, as messaging apps do when a chat is opened. A later
+     * reminder still comes on its day.
+     */
+    fun clear(context: Context, bills: List<Bill>) {
+        val manager = NotificationManagerCompat.from(context)
+        for (bill in bills) {
+            manager.cancel(notificationId(bill.id, "new"))
+            manager.cancel(notificationId(bill.id, "reminder"))
+        }
+    }
+
+    /** Takes down the "add this card?" prompt for a bill once its add-card form is open. */
+    fun clearAddCardPrompt(context: Context, unmatchedBillId: String) {
+        NotificationManagerCompat.from(context).cancel(notificationId(unmatchedBillId, "unmatched"))
+    }
+
     private fun reminderLine(bill: Bill, reminder: Reminder): String {
         val by = if (reminder.daysLeft == 0) {
             "today, ${formatDay(reminder.deadline)}"

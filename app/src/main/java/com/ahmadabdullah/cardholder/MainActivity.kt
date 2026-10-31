@@ -35,7 +35,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        BillNotifications.createChannels(this)
         ReminderWorker.scheduleDaily(this)
         // A reminder opens straight onto its card; a bill for an unsaved card opens the form.
         val openScreen = intent.getStringExtra(EXTRA_UNMATCHED_BILL_ID)?.let { ADD_FROM_BILL + it }
@@ -119,6 +118,7 @@ private fun CardHolderApp(openScreen: String?, sharedText: String?, viewModel: W
         )
         else -> when {
             current.startsWith(ADD_FROM_BILL) -> {
+                LaunchedEffect(current) { BillNotifications.clearAddCardPrompt(context, current.removePrefix(ADD_FROM_BILL)) }
                 // Null while loading; a bill that's gone (already claimed) opens an empty form.
                 val draft by produceState<CardDraft?>(null, current) {
                     value = viewModel.unmatchedBill(current.removePrefix(ADD_FROM_BILL))?.let(CardDraft::from) ?: CardDraft()
@@ -155,6 +155,9 @@ private fun CardHolderApp(openScreen: String?, sharedText: String?, viewModel: W
                 if (card == null) {
                     LaunchedEffect(cards) { if (cards != null) screen = null }
                 } else {
+                    // Seeing the card's bill here is seeing its notifications, so they're taken down.
+                    val cardBills = bills?.filter { it.cardId == card.id }.orEmpty()
+                    LaunchedEffect(card.id, cardBills) { BillNotifications.clear(context, cardBills) }
                     CardDetailScreen(
                         card = card,
                         // A bill stops showing once its due date has passed, even if the app stays open.

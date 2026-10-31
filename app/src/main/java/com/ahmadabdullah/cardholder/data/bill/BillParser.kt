@@ -16,12 +16,17 @@ import java.time.YearMonth
  *   CARD: 371***905 … Pay by 08-10-26`
  * - EBL: `Monthly bill 455120****6630 SEP2026; Total Due: BDT 9876.54, Min Due: BDT 2100.00,
  *   Last Pmt: 10-OCT-26.`
+ * - BRAC: `Credit card#**5318 & Card ID: 00412790, Oct 26 bill - Total BDT 8421.37; Min: BDT 421.07.
+ *   pay by: 08-11-26.`
  */
 object BillParser {
     private val ignoreCase = setOf(RegexOption.IGNORE_CASE)
 
-    private val totalDueLabel = Regex("""total\s*due""", ignoreCase)
-    private val minDueLabel = Regex("""min(?:imum)?\.?\s*due""", ignoreCase)
+    /** "Total Due", or just "Total" as BRAC writes it */
+    private val totalDueLabel = Regex("""\btotal(?:\s*due)?\b""", ignoreCase)
+
+    /** "Min Due", "Minimum Due", or just "Min:" as BRAC writes it */
+    private val minDueLabel = Regex("""\bmin(?:imum)?\b\.?(?:\s*due)?""", ignoreCase)
 
     private const val AMOUNT = """([\d,]+(?:\.\d+)?)\s*(dr|cr)?\b"""
     private val bdtAmount = Regex("""(?:BDT|Tk\.?|৳)\s*:?\s*$AMOUNT""", ignoreCase)
@@ -36,9 +41,9 @@ object BillParser {
     /** "371***905", "455120****6630" */
     private val maskedNumber = Regex("""\b(\d{2,6})[*xX•]{2,}(\d{3,4})\b""")
 
-    /** "Card#4417", "card ending 4417", "Card No: 4417" */
+    /** "Card#4417", "card#**4417", "card ending 4417", "Card No: 4417" */
     private val lastDigits =
-        Regex("""card\s*(?:no\.?|number)?\s*[#:]?\s*(?:ending\s*(?:in|with)?\s*)?(\d{4})\b""", ignoreCase)
+        Regex("""card\s*(?:no\.?|number)?\s*[#:]?\s*(?:ending\s*(?:in|with)?\s*)?[*xX•]*(\d{4})\b""", ignoreCase)
 
     /** "SEP-26", "Sep'26", "SEP2026" */
     private val month = Regex("""\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*[-' ]?(\d{4}|\d{2})\b""", ignoreCase)

@@ -89,6 +89,7 @@ class RemindersTest {
         assertEquals("ucb", BillMatcher.bankNamedIn("Dear C/H, Bill for UCB Card#4417")?.id)
         assertEquals("city", BillMatcher.bankNamedIn("City Islamic Amex Bill Sep'26")?.id)
         assertEquals("ebl", BillMatcher.bankNamedIn("EBL Monthly bill 455120****6630")?.id)
+        assertEquals("brac", BillMatcher.bankNamedIn("Credit card#**5318 Statement: https://s.bracbank.com/AbC123")?.id)
         // EBL's own message names no bank, and plain words aren't banks.
         assertNull(BillMatcher.bankNamedIn("Monthly bill 455120****6630 SEP2026"))
         assertNull(BillMatcher.bankNamedIn("Pay one bill at the bank"))

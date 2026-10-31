@@ -16,7 +16,7 @@ import java.time.LocalDate
 import java.time.YearMonth
 
 class BillParserTest {
-    // Real bill messages, as the banks sent them.
+    // Each bank's own wording, with made-up card digits, IDs and amounts.
     private val ucb = "Dear C/H, Bill for UCB Card#4417 (ID# 1000001) for SEP-26. Total Due is BDT 18450.50 Dr & " +
         "USD 42.00 Dr Min Due is BDT 553.50 & USD 42.00 Due date 13-10-26"
     private val city = """
@@ -30,6 +30,8 @@ class BillParserTest {
         Pay by 08-10-26
         eStatement:t.ly/NbH5
     """.trimIndent()
+    private val brac = "Credit card#**5318 & Card ID: 00412790, Oct 26 bill - Total BDT 8421.37; Min: BDT 421.07. " +
+        "pay by: 08-11-26. Statement: https://s.bracbank.com/AbC123"
     private val ebl = "Monthly bill 455120****6630 SEP2026; Total Due: BDT 9876.54, Min Due: BDT 2100.00, " +
         "Last Pmt: 10-OCT-26. Statement link"
 
@@ -63,6 +65,16 @@ class BillParserTest {
         assertEquals(Due(bdt = 9_876_54, usd = 0), bill.totalDue)
         assertEquals(Due(bdt = 2_100_00, usd = 0), bill.minDue)
         assertEquals(date("2026-10-10"), bill.dueDate)
+    }
+
+    @Test
+    fun readsBracBill() {
+        val bill = BillParser.parse(brac)!!
+        assertEquals(CardDigits("", "5318"), bill.card)
+        assertEquals(YearMonth.of(2026, 10), bill.statementMonth)
+        assertEquals(Due(bdt = 8_421_37, usd = 0), bill.totalDue)
+        assertEquals(Due(bdt = 421_07, usd = 0), bill.minDue)
+        assertEquals(date("2026-11-08"), bill.dueDate)
     }
 
     @Test
