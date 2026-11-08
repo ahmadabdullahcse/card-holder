@@ -108,6 +108,24 @@ enum class Finish {
 
     /** BRAC's emerald Diners card: a dotted globe rising from the lower right. */
     BRAC_GLOBE,
+
+    /** City Bank's Amex cards: engraved metal with a large oval medallion. */
+    CITY_AMEX,
+
+    /** City Islamic Gold: a tall fan of fine lines gathering low in the middle. */
+    CITY_ISLAMIC_GOLD,
+
+    /** City Islamic Blue: the same fan, gathering low on the left. */
+    CITY_ISLAMIC_BLUE,
+
+    /** City Visa Platinum: grainy black mineral with swirling bands. */
+    CITY_MINERAL,
+
+    /** City Visa Infinite: a twisting wave of dotted lines on black. */
+    CITY_INFINITE_WAVE,
+
+    /** City Mastercard World Elite: satin black with broad soft folds. */
+    CITY_SATIN,
 }
 
 /**
@@ -119,6 +137,8 @@ data class CardDesign(
     val finish: Finish = Finish.PLAIN,
     val accent: Color = Color.White,
     val darkText: Boolean = false,
+    /** Printed upright, like some premium cards: drawn tall and narrow, with its own layout. */
+    val vertical: Boolean = false,
 ) {
     val textColor: Color get() = if (darkText) Color(0xFF1E2228) else Color.White
 }
@@ -379,6 +399,10 @@ fun DrawScope.drawFinish(finish: Finish, accent: Color, seed: Int) {
         Finish.BRAC_PORTAL, Finish.BRAC_BRIDGE, Finish.BRAC_SAILS, Finish.BRAC_TARA, Finish.BRAC_TARA_WORLD,
         Finish.BRAC_GLOBE,
         -> drawBrac(finish, accent, random)
+
+        Finish.CITY_AMEX, Finish.CITY_ISLAMIC_GOLD, Finish.CITY_ISLAMIC_BLUE, Finish.CITY_MINERAL,
+        Finish.CITY_INFINITE_WAVE, Finish.CITY_SATIN,
+        -> drawCity(finish, accent, random)
     }
 }
 

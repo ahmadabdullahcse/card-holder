@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -21,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -29,10 +32,12 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ahmadabdullah.cardholder.data.Card
 import com.ahmadabdullah.cardholder.data.CardNetwork
+import com.ahmadabdullah.cardholder.ui.cardart.CardDesign
 import com.ahmadabdullah.cardholder.ui.cardart.CardDesigns
 import com.ahmadabdullah.cardholder.ui.cardart.drawFinish
 
@@ -41,69 +46,158 @@ const val CARD_ASPECT_RATIO = 1.586f
 
 private val CardShape = RoundedCornerShape(18.dp)
 
+/**
+ * A card as it looks in the hand. Fills the width it is given. A vertical card stands upright in
+ * the middle of that width, at the size of a landscape card turned on its end; with [sideways]
+ * it is laid on its side instead, as it would sit in a wallet, so it takes a landscape card's
+ * place and its text runs from top to bottom.
+ */
 @Composable
-fun CreditCardView(card: Card, modifier: Modifier = Modifier, onClick: (() -> Unit)? = null) {
+fun CreditCardView(card: Card, modifier: Modifier = Modifier, sideways: Boolean = false, onClick: (() -> Unit)? = null) {
     val design = CardDesigns.forCard(card.bankId, card.network, card.tier, card.variant)
-    val ink = design.textColor
+    when {
+        !design.vertical -> CardFace(card, design, modifier.fillMaxWidth().aspectRatio(CARD_ASPECT_RATIO), onClick) {
+            LandscapeLayout(card, design)
+        }
+        sideways -> BoxWithConstraints(modifier.fillMaxWidth().aspectRatio(CARD_ASPECT_RATIO), contentAlignment = Alignment.Center) {
+            // Laid out upright at the box's size turned on its end, then turned a quarter clockwise.
+            CardFace(card, design, Modifier.requiredSize(width = maxHeight, height = maxWidth).graphicsLayer { rotationZ = 90f }, onClick) {
+                UprightLayout(card, design)
+            }
+        }
+        else -> Box(modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+            CardFace(card, design, Modifier.fillMaxWidth(1 / CARD_ASPECT_RATIO).aspectRatio(1 / CARD_ASPECT_RATIO), onClick) {
+                UprightLayout(card, design)
+            }
+        }
+    }
+}
+
+@Composable
+private fun CardFace(card: Card, design: CardDesign, modifier: Modifier, onClick: (() -> Unit)?, content: @Composable () -> Unit) {
     val seed = "${card.bankId}/${card.network}/${card.tier}".hashCode()
     Box(
         modifier
-            .fillMaxWidth()
-            .aspectRatio(CARD_ASPECT_RATIO)
             .shadow(10.dp, CardShape)
             .clip(CardShape)
             .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
             .background(Brush.linearGradient(design.colors, start = Offset.Zero, end = Offset.Infinite))
     ) {
         Canvas(Modifier.fillMaxSize()) { drawFinish(design.finish, design.accent, seed) }
-        Column(Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 18.dp)) {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    card.bankName,
-                    color = ink,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 17.sp,
-                    maxLines = 1,
-                    modifier = Modifier.weight(1f),
-                )
-                Text(
-                    card.tier.uppercase(),
-                    color = ink.copy(alpha = 0.8f),
-                    fontSize = 12.sp,
-                    letterSpacing = 1.5.sp,
-                    fontWeight = FontWeight.Medium,
-                )
-            }
-            Spacer(Modifier.weight(1f))
-            Chip()
-            Spacer(Modifier.height(14.dp))
+        content()
+    }
+}
+
+@Composable
+private fun LandscapeLayout(card: Card, design: CardDesign) {
+    val ink = design.textColor
+    Column(Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 18.dp)) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
-                maskedNumber(card),
+                card.bankName,
+                color = ink,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 17.sp,
+                maxLines = 1,
+                modifier = Modifier.weight(1f),
+            )
+            Text(
+                card.tier.uppercase(),
+                color = ink.copy(alpha = 0.8f),
+                fontSize = 12.sp,
+                letterSpacing = 1.5.sp,
+                fontWeight = FontWeight.Medium,
+            )
+        }
+        Spacer(Modifier.weight(1f))
+        Chip()
+        Spacer(Modifier.height(14.dp))
+        Text(
+            maskedNumber(card),
+            color = ink,
+            fontFamily = FontFamily.Monospace,
+            fontSize = 19.sp,
+            letterSpacing = 1.sp,
+            maxLines = 1,
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            "VALID THRU  ${formatExpiry(card.expiryMonth, card.expiryYear)}",
+            color = ink.copy(alpha = 0.8f),
+            fontFamily = FontFamily.Monospace,
+            fontSize = 11.sp,
+        )
+        Spacer(Modifier.height(8.dp))
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
+            Text(
+                card.holderName.uppercase(),
+                color = ink.copy(alpha = 0.9f),
+                fontSize = 13.sp,
+                letterSpacing = 1.sp,
+                maxLines = 1,
+                modifier = Modifier.weight(1f),
+            )
+            NetworkMark(card.network, onLight = design.darkText)
+        }
+    }
+}
+
+/**
+ * The upright layout. The bank and tier sit at the top, the chip a little below the middle, the
+ * number in two lines under it, and the network mark in the bottom right corner.
+ */
+@Composable
+private fun UprightLayout(card: Card, design: CardDesign) {
+    val ink = design.textColor
+    Column(Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 18.dp)) {
+        Text(
+            card.bankName,
+            color = ink,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            card.tier.uppercase(),
+            color = ink.copy(alpha = 0.8f),
+            fontSize = 11.sp,
+            letterSpacing = 1.5.sp,
+            fontWeight = FontWeight.Medium,
+            maxLines = 1,
+        )
+        Spacer(Modifier.weight(1f))
+        Chip()
+        Spacer(Modifier.height(14.dp))
+        maskedNumber(card).split(" ").chunked(2).forEach { groups ->
+            Text(
+                groups.joinToString(" "),
                 color = ink,
                 fontFamily = FontFamily.Monospace,
-                fontSize = 19.sp,
+                fontSize = 18.sp,
                 letterSpacing = 1.sp,
                 maxLines = 1,
             )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                "VALID THRU  ${formatExpiry(card.expiryMonth, card.expiryYear)}",
-                color = ink.copy(alpha = 0.8f),
-                fontFamily = FontFamily.Monospace,
-                fontSize = 11.sp,
-            )
-            Spacer(Modifier.height(8.dp))
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
-                Text(
-                    card.holderName.uppercase(),
-                    color = ink.copy(alpha = 0.9f),
-                    fontSize = 13.sp,
-                    letterSpacing = 1.sp,
-                    maxLines = 1,
-                    modifier = Modifier.weight(1f),
-                )
-                NetworkMark(card.network, onLight = design.darkText)
-            }
+        }
+        Spacer(Modifier.height(4.dp))
+        Text(
+            "VALID THRU  ${formatExpiry(card.expiryMonth, card.expiryYear)}",
+            color = ink.copy(alpha = 0.8f),
+            fontFamily = FontFamily.Monospace,
+            fontSize = 11.sp,
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            card.holderName.uppercase(),
+            color = ink.copy(alpha = 0.9f),
+            fontSize = 12.sp,
+            letterSpacing = 1.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Spacer(Modifier.height(10.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+            NetworkMark(card.network, onLight = design.darkText)
         }
     }
 }

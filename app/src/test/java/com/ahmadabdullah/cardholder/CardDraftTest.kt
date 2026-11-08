@@ -26,6 +26,7 @@ class CardDraftTest {
         .withBank(city)
         .withNetwork(CardNetwork.AMEX)
         .withTier("Gold")
+        .withVariant("Standard")
         .copy(
             firstName = "Rahim", lastName = "Uddin", firstFour = "3712", lastFour = "0005",
             bdtLimit = "500000", usdLimit = "2000", billingDay = 15,

@@ -116,7 +116,8 @@ private fun CardStack(
             header()
             Box(Modifier.height(StackPeek * (cards.size - 1) + cardHeight)) {
                 cards.forEachIndexed { index, card ->
-                    CreditCardView(card, Modifier.offset(y = StackPeek * index), onClick = { onOpenCard(card) })
+                    // An upright card lies on its side in the stack, as it would in a wallet.
+                    CreditCardView(card, Modifier.offset(y = StackPeek * index), sideways = true, onClick = { onOpenCard(card) })
                 }
             }
         }

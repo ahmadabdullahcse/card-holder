@@ -75,7 +75,8 @@ class DesignGalleryActivity : ComponentActivity() {
                             }
                             items(cards) { (network, tier, variant) ->
                                 // Drawn at a phone's full card width, then scaled down, so it looks as it does in the app.
-                                BoxWithConstraints(Modifier.fillMaxWidth().aspectRatio(CARD_ASPECT_RATIO)) {
+                                val vertical = CardDesigns.forCard(bank.id, network, tier, variant).vertical
+                                BoxWithConstraints(Modifier.fillMaxWidth().aspectRatio(if (vertical) 1f else CARD_ASPECT_RATIO)) {
                                     val scale = maxWidth / FULL_WIDTH
                                     CreditCardView(
                                         Card(

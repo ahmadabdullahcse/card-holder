@@ -197,12 +197,14 @@ private fun CardRow(
                 Icon(DragHandleIcon, contentDescription = "Drag to move ${card.bankName} ending ${card.lastFour}")
             }
             // A small swatch of the card's own design.
-            Box(
-                Modifier
-                    .size(width = 46.dp, height = 29.dp)
-                    .clip(RoundedCornerShape(5.dp))
-                    .background(Brush.linearGradient(design.colors, start = Offset.Zero, end = Offset.Infinite))
-            )
+            Box(Modifier.size(width = 46.dp, height = 29.dp), contentAlignment = Alignment.Center) {
+                Box(
+                    Modifier
+                        .then(if (design.vertical) Modifier.size(width = 18.dp, height = 29.dp) else Modifier.size(width = 46.dp, height = 29.dp))
+                        .clip(RoundedCornerShape(5.dp))
+                        .background(Brush.linearGradient(design.colors, start = Offset.Zero, end = Offset.Infinite))
+                )
+            }
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(card.bankName, style = MaterialTheme.typography.titleSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)

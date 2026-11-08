@@ -23,6 +23,12 @@ import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRAC_TARA
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRAC_TARA_WORLD
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRUSHED
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.CARBON
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.CITY_AMEX
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.CITY_INFINITE_WAVE
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.CITY_ISLAMIC_BLUE
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.CITY_ISLAMIC_GOLD
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.CITY_MINERAL
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.CITY_SATIN
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.CHEVRON
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.DIAMONDS
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.DOTS
@@ -45,8 +51,9 @@ import com.ahmadabdullah.cardholder.ui.cardart.Finish.STRIPE
  * logo is copied.
  */
 object CardDesigns {
-    private fun d(light: Long, dark: Long, finish: Finish = PLAIN, accent: Long = 0xFFFFFFFF, darkText: Boolean = false) =
-        CardDesign(listOf(Color(light), Color(dark)), finish, Color(accent), darkText)
+    private fun d(
+        light: Long, dark: Long, finish: Finish = PLAIN, accent: Long = 0xFFFFFFFF, darkText: Boolean = false, vertical: Boolean = false,
+    ) = CardDesign(listOf(Color(light), Color(dark)), finish, Color(accent), darkText, vertical)
 
     private val designs: Map<String, CardDesign> = buildMap {
         fun put(bank: String, network: CardNetwork, tier: String, design: CardDesign) = put(key(bank, network, tier), design)
@@ -85,14 +92,18 @@ object CardDesigns {
         put("brac", DINERS, "Emerald", d(0xFF1F7D44, 0xFF052611, BRAC_GLOBE, 0xFF9EEFC0))
 
         // City Bank: the Amex cards carry fine engraved lines.
-        put("city", AMEX, "Blue", d(0xFFC9DDF0, 0xFF8DB4D9, GUILLOCHE, darkText = true))
-        put("city", AMEX, "Gold", d(0xFFC7A79E, 0xFF8A6A63, GUILLOCHE))
-        put("city", AMEX, "Platinum", d(0xFFE6E4E5, 0xFFA9A6A8, GUILLOCHE, darkText = true))
-        put("city", AMEX, "Platinum Reserve", d(0xFF9A9A9A, 0xFF4A4A4A, GUILLOCHE))
-        put("city", AMEX, "Ultramarine", d(0xFF2A86C0, 0xFF0F5E93, GUILLOCHE))
-        put("city", VISA, "Platinum", d(0xFF2A2A2A, 0xFF0E0E0E, MARBLE))
-        put("city", VISA, "Infinite", d(0xFF2B2B2B, 0xFF0A0A0A, RIBBON, 0xFF9A9A9A))
-        put("city", MASTERCARD, "World Elite", d(0xFF1A1A1A, 0xFF050505, SILK, 0xFF8A8D90))
+        put("city", AMEX, "Blue", d(0xFFC4DCF2, 0xFF86AEDA, CITY_AMEX, 0xFF2A5D93, darkText = true))
+        putVariant("city", AMEX, "Blue", "Standard", d(0xFFC4DCF2, 0xFF86AEDA, CITY_AMEX, 0xFF2A5D93, darkText = true))
+        putVariant("city", AMEX, "Blue", "Islamic", d(0xFF168C70, 0xFF0F4C8C, CITY_ISLAMIC_BLUE, 0xFFB8F0E0))
+        put("city", AMEX, "Gold", d(0xFFDDB9AE, 0xFFA87E73, CITY_AMEX, 0xFF5E3B33, darkText = true))
+        putVariant("city", AMEX, "Gold", "Standard", d(0xFFDDB9AE, 0xFFA87E73, CITY_AMEX, 0xFF5E3B33, darkText = true))
+        putVariant("city", AMEX, "Gold", "Islamic", d(0xFFEAD47E, 0xFFC4A042, CITY_ISLAMIC_GOLD, 0xFFFFF6D0, darkText = true))
+        put("city", AMEX, "Platinum", d(0xFFF0F0F1, 0xFFB4B4B7, CITY_AMEX, 0xFF4A4C50, darkText = true))
+        put("city", AMEX, "Platinum Reserve", d(0xFF6C6D70, 0xFF2C2D30, CITY_AMEX, 0xFFE0E0E0))
+        put("city", AMEX, "Ultramarine", d(0xFF2E86CC, 0xFF0D4A8E, CITY_AMEX, 0xFFCFE6FF))
+        put("city", VISA, "Platinum", d(0xFF2A2A2C, 0xFF0A0A0B, CITY_MINERAL, 0xFFB8B8B8))
+        put("city", VISA, "Infinite", d(0xFF232325, 0xFF060607, CITY_INFINITE_WAVE, 0xFFA0A0A4, vertical = true))
+        put("city", MASTERCARD, "World Elite", d(0xFF0A0A0B, 0xFF000000, CITY_SATIN, 0xFF7E8084))
 
         // Dhaka Bank: black silk for the metal tiers.
         put("dhaka", VISA, "Gold", d(0xFFD9A84E, 0xFF8E5A1E, SILK, 0xFFFFE2A8))
@@ -251,6 +262,8 @@ object CardDesigns {
     private val variants = mapOf(
         key("brac", VISA, "Platinum") to listOf("Tara", "Flexi"),
         key("brac", MASTERCARD, "World") to listOf("Standard", "Tara"),
+        key("city", AMEX, "Gold") to listOf("Standard", "Islamic"),
+        key("city", AMEX, "Blue") to listOf("Standard", "Islamic"),
     )
 
     fun variantsFor(bankId: String, network: CardNetwork, tier: String): List<String> = variants[key(bankId, network, tier)].orEmpty()
