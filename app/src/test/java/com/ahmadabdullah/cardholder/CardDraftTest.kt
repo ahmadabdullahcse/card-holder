@@ -121,6 +121,20 @@ class CardDraftTest {
     }
 
     @Test
+    fun aCardWithEditionsMustHaveOneChosen() {
+        val platinum = complete.withBank(brac).withNetwork(CardNetwork.VISA).withTier("Platinum").copy(firstFour = "4123")
+        assertEquals(listOf("Tara", "Flexi"), platinum.variantOptions)
+        assertNull(platinum.toCard())
+        val flexi = platinum.withVariant("Flexi")
+        assertEquals("Flexi", flexi.toCard("id")!!.variant)
+        // The edition belongs to the tier, so choosing another tier clears it.
+        assertNull(flexi.withTier("Gold").variant)
+        assertTrue(flexi.withTier("Gold").variantOptions.isEmpty())
+        // Editing keeps the edition.
+        assertEquals("Flexi", CardDraft.from(flexi.toCard("id")!!, today = today).variant)
+    }
+
+    @Test
     fun aSavedCardOpensForEditingWithEverythingFilledIn() {
         val card = complete.toCard("card-id")!!
         val draft = CardDraft.from(card, today = today)

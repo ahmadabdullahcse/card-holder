@@ -118,6 +118,16 @@ fun AddCardScreen(
                     hint = if (draft.network == null) "Choose a network first" else null,
                     error = error(if (draft.network != null && draft.tier == null) "Choose a tier" else null, false),
                 )
+                if (draft.variantOptions.isNotEmpty()) {
+                    Dropdown(
+                        label = "Card edition",
+                        options = draft.variantOptions,
+                        selected = draft.variant,
+                        optionLabel = { it },
+                        onSelect = { draft = draft.withVariant(it) },
+                        error = error(draft.variantError, false),
+                    )
+                }
 
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     NameField(
@@ -211,6 +221,7 @@ private fun CardDraft.preview(): Card? {
         bankId = bank.id,
         network = network,
         tier = tier ?: "",
+        variant = variant,
         firstName = firstName.trim().ifEmpty { "First" },
         lastName = lastName.trim().ifEmpty { "Last" },
         firstFour = firstFour.padEnd(4, '•'),
@@ -319,7 +330,7 @@ private fun NumberField(
 private val DraftSaver = Saver<CardDraft, List<Any?>>(
     save = {
         listOf(
-            it.bank?.id, it.network?.name, it.tier, it.firstName, it.lastName,
+            it.bank?.id, it.network?.name, it.tier, it.variant, it.firstName, it.lastName,
             it.firstFour, it.lastFour, it.bdtLimit, it.usdLimit, it.billingDay,
             it.expiryMonth, it.expiryYear,
         )
@@ -329,15 +340,16 @@ private val DraftSaver = Saver<CardDraft, List<Any?>>(
             bank = (it[0] as String?)?.let(BankCatalog::bank),
             network = (it[1] as String?)?.let(CardNetwork::valueOf),
             tier = it[2] as String?,
-            firstName = it[3] as String,
-            lastName = it[4] as String,
-            firstFour = it[5] as String,
-            lastFour = it[6] as String,
-            bdtLimit = it[7] as String,
-            usdLimit = it[8] as String,
-            billingDay = it[9] as Int?,
-            expiryMonth = it[10] as Int?,
-            expiryYear = it[11] as Int?,
+            variant = it[3] as String?,
+            firstName = it[4] as String,
+            lastName = it[5] as String,
+            firstFour = it[6] as String,
+            lastFour = it[7] as String,
+            bdtLimit = it[8] as String,
+            usdLimit = it[9] as String,
+            billingDay = it[10] as Int?,
+            expiryMonth = it[11] as Int?,
+            expiryYear = it[12] as Int?,
         )
     },
 )

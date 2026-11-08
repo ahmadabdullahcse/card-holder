@@ -30,6 +30,7 @@ import com.ahmadabdullah.cardholder.data.Card
 import com.ahmadabdullah.cardholder.data.CardNetwork
 import com.ahmadabdullah.cardholder.ui.CARD_ASPECT_RATIO
 import com.ahmadabdullah.cardholder.ui.CreditCardView
+import com.ahmadabdullah.cardholder.ui.cardart.CardDesigns
 import com.ahmadabdullah.cardholder.ui.theme.CardHolderTheme
 
 /**
@@ -67,14 +68,18 @@ class DesignGalleryActivity : ComponentActivity() {
                     ) {
                         banks.forEach { bank ->
                             item(span = { GridItemSpan(2) }) { Text(bank.name, style = MaterialTheme.typography.titleMedium) }
-                            val cards = bank.networks.flatMap { network -> bank.tiersFor(network).map { network to it } }
-                            items(cards) { (network, tier) ->
+                            val cards = bank.networks.flatMap { network ->
+                                bank.tiersFor(network).flatMap { tier ->
+                                    CardDesigns.variantsFor(bank.id, network, tier).ifEmpty { listOf(null) }.map { Triple(network, tier, it) }
+                                }
+                            }
+                            items(cards) { (network, tier, variant) ->
                                 // Drawn at a phone's full card width, then scaled down, so it looks as it does in the app.
                                 BoxWithConstraints(Modifier.fillMaxWidth().aspectRatio(CARD_ASPECT_RATIO)) {
                                     val scale = maxWidth / FULL_WIDTH
                                     CreditCardView(
                                         Card(
-                                            id = "${bank.id}/$network/$tier", bankId = bank.id, network = network, tier = tier,
+                                            id = "${bank.id}/$network/$tier/$variant", bankId = bank.id, network = network, tier = tier, variant = variant,
                                             firstName = "Rahim", lastName = "Uddin", firstFour = sampleStart(network), lastFour = "4417",
                                             bdtLimit = 0, usdLimit = 0, billingDay = 1, expiryMonth = 8, expiryYear = 2029,
                                         ),

@@ -190,7 +190,7 @@ private fun CardRow(
     dragHandle: Modifier,
     modifier: Modifier = Modifier,
 ) {
-    val design = CardDesigns.forCard(card.bankId, card.network, card.tier)
+    val design = CardDesigns.forCard(card.bankId, card.network, card.tier, card.variant)
     OutlinedCard(modifier.fillMaxWidth().height(RowHeight), shape = RoundedCornerShape(12.dp)) {
         Row(Modifier.fillMaxSize().padding(start = 4.dp, end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(dragHandle.size(40.dp), contentAlignment = Alignment.Center) {

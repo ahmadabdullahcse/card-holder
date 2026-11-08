@@ -17,6 +17,8 @@ data class Card(
     val billingDay: Int,
     val expiryMonth: Int,
     val expiryYear: Int,
+    /** A named edition when a bank issues visually distinct cards under one network and tier. */
+    val variant: String? = null,
 ) {
     val bankName: String get() = BankCatalog.bank(bankId)?.name ?: bankId
     val holderName: String get() = "$firstName $lastName"
@@ -26,6 +28,7 @@ data class Card(
         .put("bankId", bankId)
         .put("network", network.name)
         .put("tier", tier)
+        .put("variant", variant)
         .put("firstName", firstName)
         .put("lastName", lastName)
         .put("firstFour", firstFour)
@@ -42,6 +45,7 @@ data class Card(
             bankId = json.getString("bankId"),
             network = CardNetwork.valueOf(json.getString("network")),
             tier = json.getString("tier"),
+            variant = json.optString("variant").takeIf { it.isNotBlank() },
             firstName = json.getString("firstName"),
             lastName = json.getString("lastName"),
             firstFour = json.getString("firstFour"),

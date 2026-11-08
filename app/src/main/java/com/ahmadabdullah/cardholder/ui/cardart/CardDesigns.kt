@@ -10,6 +10,17 @@ import com.ahmadabdullah.cardholder.data.CardNetwork.UNIONPAY
 import com.ahmadabdullah.cardholder.data.CardNetwork.VISA
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.BEAM
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.BLOBS
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRAC_BRIDGE
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRAC_CLASSIC
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRAC_FLEXI
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRAC_GLOBE
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRAC_GOLD
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRAC_NIGHT_TILES
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRAC_PORTAL
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRAC_SAILS
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRAC_SIGNATURE
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRAC_TARA
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRAC_TARA_WORLD
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRUSHED
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.CARBON
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.CHEVRON
@@ -38,7 +49,9 @@ object CardDesigns {
         CardDesign(listOf(Color(light), Color(dark)), finish, Color(accent), darkText)
 
     private val designs: Map<String, CardDesign> = buildMap {
-        fun put(bank: String, network: CardNetwork, tier: String, design: CardDesign) = put("$bank/$network/$tier", design)
+        fun put(bank: String, network: CardNetwork, tier: String, design: CardDesign) = put(key(bank, network, tier), design)
+        fun putVariant(bank: String, network: CardNetwork, tier: String, variant: String, design: CardDesign) =
+            put(key(bank, network, tier, variant), design)
         fun putAll(bank: String, networks: List<CardNetwork>, tier: String, design: CardDesign) = networks.forEach { put(bank, it, tier, design) }
         val both = listOf(VISA, MASTERCARD)
 
@@ -55,15 +68,21 @@ object CardDesigns {
         put("bank_asia", MASTERCARD, "Titanium", d(0xFF1E9E6A, 0xFF0B5E3D, SILK))
         put("bank_asia", MASTERCARD, "World Elite", d(0xFF1A1A1A, 0xFF000000, SILK, 0xFF8A8A8A))
 
-        // BRAC Bank: rotated squares run through most of its cards.
-        putAll("brac", both, "Classic", d(0xFFECEDEF, 0xFFA9ABAE, DIAMONDS, 0xFF7D7F82, darkText = true))
-        putAll("brac", both, "Gold", d(0xFFF8D873, 0xFFD9A548, DIAMONDS, 0xFFB8862F, darkText = true))
-        putAll("brac", both, "Platinum", d(0xFF2A2A2A, 0xFF000000, DIAMONDS, 0xFF7A7A7A))
-        put("brac", VISA, "Signature", d(0xFF2A1035, 0xFF000000, DIAMONDS, 0xFFC9A24B))
-        put("brac", VISA, "Infinite", d(0xFF273555, 0xFF0F1628, BEAM, 0xFFDCE6FF))
-        put("brac", MASTERCARD, "Titanium", d(0xFF0B0B14, 0xFF000000, RIBBON, 0xFF3B7BD6))
-        put("brac", MASTERCARD, "World", d(0xFF2BD0E6, 0xFF0FA3B5, SILK))
-        put("brac", DINERS, "Emerald", d(0xFF0B5A36, 0xFF062514, GLOBE, 0xFF9CE0B8))
+        // BRAC Bank: each card drawn after its real one (see BracArt.kt).
+        putAll("brac", both, "Classic", d(0xFFF4F5F7, 0xFFC9CCD2, BRAC_CLASSIC, 0xFF6B707A, darkText = true))
+        putAll("brac", both, "Gold", d(0xFFF8CF4A, 0xFFDB9C22, BRAC_GOLD, 0xFF9A6F23, darkText = true))
+        put("brac", MASTERCARD, "Platinum", d(0xFF1C1F24, 0xFF030405, BRAC_NIGHT_TILES, 0xFFA3AEBD))
+        // Older cards saved before editions existed get the Tara look.
+        put("brac", VISA, "Platinum", d(0xFFA8232A, 0xFF4A0709, BRAC_TARA, 0xFFF6CDB4))
+        putVariant("brac", VISA, "Platinum", "Tara", d(0xFFA8232A, 0xFF4A0709, BRAC_TARA, 0xFFF6CDB4))
+        putVariant("brac", VISA, "Platinum", "Flexi", d(0xFF1A92D4, 0xFF04305A, BRAC_FLEXI, 0xFFC4F0FF))
+        put("brac", VISA, "Signature", d(0xFF1A1020, 0xFF040306, BRAC_SIGNATURE, 0xFFE2B44C))
+        put("brac", VISA, "Infinite", d(0xFF2B4067, 0xFF070C18, BRAC_PORTAL, 0xFFCFE2FF))
+        put("brac", MASTERCARD, "Titanium", d(0xFF0D111B, 0xFF010204, BRAC_BRIDGE, 0xFF4FB4F0))
+        put("brac", MASTERCARD, "World", d(0xFF1FCBE0, 0xFF0590B4, BRAC_SAILS, 0xFFE6FFFB))
+        putVariant("brac", MASTERCARD, "World", "Standard", d(0xFF1FCBE0, 0xFF0590B4, BRAC_SAILS, 0xFFE6FFFB))
+        putVariant("brac", MASTERCARD, "World", "Tara", d(0xFF3FB9CC, 0xFF0F8399, BRAC_TARA_WORLD, 0xFFFFFFFF))
+        put("brac", DINERS, "Emerald", d(0xFF1F7D44, 0xFF052611, BRAC_GLOBE, 0xFF9EEFC0))
 
         // City Bank: the Amex cards carry fine engraved lines.
         put("city", AMEX, "Blue", d(0xFFC9DDF0, 0xFF8DB4D9, GUILLOCHE, darkText = true))
@@ -226,8 +245,18 @@ object CardDesigns {
 
     private val fallback = d(0xFF546E7A, 0xFF263238, SILK)
 
-    fun hasOwnDesign(bankId: String, network: CardNetwork, tier: String) = "$bankId/$network/$tier" in designs
+    private fun key(bankId: String, network: CardNetwork, tier: String, variant: String? = null) =
+        listOfNotNull(bankId, network.name, tier, variant).joinToString("/")
 
-    fun forCard(bankId: String, network: CardNetwork, tier: String): CardDesign =
-        designs["$bankId/$network/$tier"] ?: byTier[tier] ?: fallback
+    private val variants = mapOf(
+        key("brac", VISA, "Platinum") to listOf("Tara", "Flexi"),
+        key("brac", MASTERCARD, "World") to listOf("Standard", "Tara"),
+    )
+
+    fun variantsFor(bankId: String, network: CardNetwork, tier: String): List<String> = variants[key(bankId, network, tier)].orEmpty()
+
+    fun hasOwnDesign(bankId: String, network: CardNetwork, tier: String) = key(bankId, network, tier) in designs
+
+    fun forCard(bankId: String, network: CardNetwork, tier: String, variant: String? = null): CardDesign =
+        designs[key(bankId, network, tier, variant)] ?: designs[key(bankId, network, tier)] ?: byTier[tier] ?: fallback
 }

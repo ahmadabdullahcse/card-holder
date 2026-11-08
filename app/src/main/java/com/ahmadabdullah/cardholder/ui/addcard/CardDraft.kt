@@ -5,6 +5,7 @@ import com.ahmadabdullah.cardholder.data.BankCatalog
 import com.ahmadabdullah.cardholder.data.Card
 import com.ahmadabdullah.cardholder.data.CardNetwork
 import com.ahmadabdullah.cardholder.data.bill.UnmatchedBill
+import com.ahmadabdullah.cardholder.ui.cardart.CardDesigns
 import java.util.Calendar
 import java.util.UUID
 
@@ -17,6 +18,7 @@ data class CardDraft(
     val bank: Bank? = null,
     val network: CardNetwork? = null,
     val tier: String? = null,
+    val variant: String? = null,
     val firstName: String = "",
     val lastName: String = "",
     val firstFour: String = "",
@@ -31,19 +33,23 @@ data class CardDraft(
 ) {
     val networkOptions: List<CardNetwork> get() = bank?.networks.orEmpty()
     val tierOptions: List<String> get() = network?.let { bank?.tiersFor(it) }.orEmpty()
+    val variantOptions: List<String> get() =
+        if (bank != null && network != null && tier != null) CardDesigns.variantsFor(bank.id, network, tier) else emptyList()
 
     fun withBank(bank: Bank): CardDraft {
         if (bank == this.bank) return this
         val network = bank.networks.singleOrNull()
-        return copy(bank = bank, network = network, tier = network?.let { bank.tiersFor(it).singleOrNull() })
+        return copy(bank = bank, network = network, tier = network?.let { bank.tiersFor(it).singleOrNull() }, variant = null)
     }
 
     fun withNetwork(network: CardNetwork): CardDraft {
         if (network == this.network) return this
-        return copy(network = network, tier = bank?.tiersFor(network)?.singleOrNull())
+        return copy(network = network, tier = bank?.tiersFor(network)?.singleOrNull(), variant = null)
     }
 
-    fun withTier(tier: String): CardDraft = copy(tier = tier)
+    fun withTier(tier: String): CardDraft = copy(tier = tier, variant = null)
+
+    fun withVariant(variant: String): CardDraft = copy(variant = variant)
 
     /** From this year to ten years ahead, the longest a card is issued for. */
     val expiryYearOptions: List<Int> get() = (today / 12).let { (it..it + 10).toList() }
@@ -84,6 +90,8 @@ data class CardDraft(
 
     val billingDayError: String? get() = if (billingDay == null) "Choose the billing date" else null
 
+    val variantError: String? get() = if (variantOptions.isNotEmpty() && variant !in variantOptions) "Choose the card edition" else null
+
     val expiryMonthError: String? get() = if (expiryMonth == null) "Choose the expiry month" else null
     val expiryYearError: String? get() = if (expiryYear == null) "Choose the expiry year" else null
 
@@ -91,7 +99,7 @@ data class CardDraft(
         get() = bank != null && network != null && tier != null &&
             listOf(
                 firstNameError, lastNameError, firstFourError, lastFourError,
-                bdtLimitError, usdLimitError, billingDayError, expiryMonthError, expiryYearError,
+                bdtLimitError, usdLimitError, billingDayError, variantError, expiryMonthError, expiryYearError,
             ).all { it == null } &&
             isUnexpired(expiryMonth!!, expiryYear!!)
 
@@ -103,6 +111,7 @@ data class CardDraft(
             bankId = bank!!.id,
             network = network!!,
             tier = tier!!,
+            variant = variant,
             firstName = firstName.trim(),
             lastName = lastName.trim(),
             firstFour = firstFour,
@@ -158,6 +167,7 @@ data class CardDraft(
                 bank = bank,
                 network = network,
                 tier = tier,
+                variant = card.variant?.takeIf { it in CardDesigns.variantsFor(card.bankId, card.network, tier ?: "") },
                 firstName = card.firstName,
                 lastName = card.lastName,
                 firstFour = card.firstFour,

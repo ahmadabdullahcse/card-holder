@@ -36,6 +36,17 @@ class JsonListFileTest {
     }
 
     @Test
+    fun aCardsEditionIsSavedAndOlderCardsReadWithoutOne() {
+        val file = File(folder.root, "cards.json")
+        val flexi = Card("f", "brac", CardNetwork.VISA, "Platinum", "Rahim", "Uddin", "4123", "4417", 200000, 0, 20, 6, 2029, variant = "Flexi")
+        store(file).write(listOf(flexi, card("a")))
+        assertEquals(listOf(flexi, card("a")), store(file).read())
+        // A card saved before editions existed has no "variant" at all.
+        file.writeText(file.readText().replace(",\"variant\":\"Flexi\"", ""))
+        assertEquals(null, store(file).read().first().variant)
+    }
+
+    @Test
     fun noFileMeansNoCards() {
         assertEquals(emptyList<Card>(), store(File(folder.root, "cards.json")).read())
     }

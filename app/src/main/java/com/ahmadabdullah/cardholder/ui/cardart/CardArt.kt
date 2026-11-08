@@ -75,6 +75,39 @@ enum class Finish {
 
     /** Fine wandering veins, like marble. */
     MARBLE,
+
+    /** BRAC Bank's pale geometric card family. */
+    BRAC_CLASSIC,
+
+    /** BRAC Bank's gold card family, with a field of inset tiles. */
+    BRAC_GOLD,
+
+    /** The bright blue, circular Flexi-inspired Platinum treatment. */
+    BRAC_FLEXI,
+
+    /** A dark Platinum treatment with restrained graphite tiles. */
+    BRAC_NIGHT_TILES,
+
+    /** The violet-and-gold mosaic used for Signature. */
+    BRAC_SIGNATURE,
+
+    /** The illuminated doorway on the Infinite card. */
+    BRAC_PORTAL,
+
+    /** The night bridge-light treatment for Titanium. */
+    BRAC_BRIDGE,
+
+    /** A turquoise card with a radial arrangement of small sails. */
+    BRAC_SAILS,
+
+    /** BRAC's crimson Tara family: flowing lines over a rich red field. */
+    BRAC_TARA,
+
+    /** BRAC's turquoise Tara World family, with an embossed floral field. */
+    BRAC_TARA_WORLD,
+
+    /** BRAC's emerald Diners card: a dotted globe rising from the lower right. */
+    BRAC_GLOBE,
 }
 
 /**
@@ -341,6 +374,11 @@ fun DrawScope.drawFinish(finish: Finish, accent: Color, seed: Int) {
             }
             drawPath(path, accent.copy(alpha = 0.03f + random.nextFloat() * 0.09f), style = Stroke(line * (0.5f + random.nextFloat() * 2.5f)))
         }
+
+        Finish.BRAC_CLASSIC, Finish.BRAC_GOLD, Finish.BRAC_FLEXI, Finish.BRAC_NIGHT_TILES, Finish.BRAC_SIGNATURE,
+        Finish.BRAC_PORTAL, Finish.BRAC_BRIDGE, Finish.BRAC_SAILS, Finish.BRAC_TARA, Finish.BRAC_TARA_WORLD,
+        Finish.BRAC_GLOBE,
+        -> drawBrac(finish, accent, random)
     }
 }
 
@@ -364,3 +402,4 @@ private fun DrawScope.star(center: Offset, radius: Float, color: Color, filled: 
         }
     }
 }
+

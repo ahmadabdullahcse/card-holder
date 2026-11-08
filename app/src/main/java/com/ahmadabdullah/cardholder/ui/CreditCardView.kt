@@ -43,7 +43,7 @@ private val CardShape = RoundedCornerShape(18.dp)
 
 @Composable
 fun CreditCardView(card: Card, modifier: Modifier = Modifier, onClick: (() -> Unit)? = null) {
-    val design = CardDesigns.forCard(card.bankId, card.network, card.tier)
+    val design = CardDesigns.forCard(card.bankId, card.network, card.tier, card.variant)
     val ink = design.textColor
     val seed = "${card.bankId}/${card.network}/${card.tier}".hashCode()
     Box(
