@@ -24,6 +24,15 @@ import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRAC_TARA_WORLD
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRUSHED
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.CARBON
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.CITY_AMEX
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.EBL_CLASSIC
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.EBL_GOLD
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.EBL_PLATINUM
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.EBL_SIGNATURE
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.EBL_TITANIUM
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.EBL_WORLD
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.EBL_WORLD_ELITE
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.EBL_DINERS
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.EBL_UNIONPAY
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.CITY_INFINITE_WAVE
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.CITY_ISLAMIC_BLUE
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.CITY_ISLAMIC_GOLD
@@ -120,16 +129,16 @@ object CardDesigns {
         put("dbbl", MASTERCARD, "World", d(0xFF2E292A, 0xFF141112, ROSETTE, 0xFFD4A45A))
 
         // Eastern Bank
-        put("ebl", VISA, "Classic", d(0xFFE3E4E4, 0xFFA9ADAF, STRIPE, 0xFFE1B100, darkText = true))
-        put("ebl", VISA, "Gold", d(0xFFC99A3E, 0xFF9E7130, BRUSHED))
-        put("ebl", VISA, "Platinum", d(0xFF3F8AC9, 0xFF1C4F86, FACETS))
-        put("ebl", VISA, "Signature", d(0xFF0F4A55, 0xFF020607, DOTS, 0xFF2BA3B8))
-        put("ebl", VISA, "Infinite", d(0xFF46464A, 0xFF2E2E30))
-        put("ebl", MASTERCARD, "Titanium", d(0xFF2B2B2B, 0xFF050505, CHEVRON, 0xFF9C9C9C))
-        put("ebl", MASTERCARD, "World", d(0xFF2A2416, 0xFF050403, GLOBE, 0xFFE3B85C))
-        put("ebl", MASTERCARD, "World Elite", d(0xFF333231, 0xFF1A1919, CARBON, 0xFF5A5A5A))
-        put("ebl", DINERS, "Standard", d(0xFF2E2A2B, 0xFF121011, BLOBS, 0xFFF7A81B))
-        put("ebl", UNIONPAY, "Platinum", d(0xFFF0F0F0, 0xFFB8BABD, RIBBON, 0xFF1AAA61, darkText = true))
+        put("ebl", VISA, "Classic", d(0xFFE8E9EA, 0xFFB0B3B6, EBL_CLASSIC, 0xFFF2C400, darkText = true))
+        put("ebl", VISA, "Gold", d(0xFFE4B759, 0xFFB07C2A, EBL_GOLD, darkText = true))
+        put("ebl", VISA, "Platinum", d(0xFF2F86D6, 0xFF0B2F6E, EBL_PLATINUM, 0xFF9FD8FF))
+        put("ebl", VISA, "Signature", d(0xFF0B1A1F, 0xFF020405, EBL_SIGNATURE, 0xFF2BB3C8))
+        put("ebl", VISA, "Infinite", d(0xFF4A4A4E, 0xFF2A2A2D, BRUSHED))
+        put("ebl", MASTERCARD, "Titanium", d(0xFF1A1A1B, 0xFF050505, EBL_TITANIUM))
+        put("ebl", MASTERCARD, "World", d(0xFF121218, 0xFF020203, EBL_WORLD, 0xFFF2B744))
+        put("ebl", MASTERCARD, "World Elite", d(0xFF2A2A2B, 0xFF0E0E0F, EBL_WORLD_ELITE))
+        put("ebl", DINERS, "Standard", d(0xFF1E1C1D, 0xFF0A0909, EBL_DINERS, 0xFFFFC21A))
+        put("ebl", UNIONPAY, "Platinum", d(0xFFF2F2F3, 0xFFC4C6C9, EBL_UNIONPAY, darkText = true))
 
         // IFIC Bank
         put("ific", VISA, "Gold", d(0xFFF0C34A, 0xFFD19A22, CHEVRON, darkText = true))

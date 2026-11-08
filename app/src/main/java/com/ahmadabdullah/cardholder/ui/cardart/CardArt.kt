@@ -126,6 +126,33 @@ enum class Finish {
 
     /** City Mastercard World Elite: satin black with broad soft folds. */
     CITY_SATIN,
+
+    /** EBL Classic: woven silver with a yellow strip down the left edge. */
+    EBL_CLASSIC,
+
+    /** EBL Gold: worn gold with wavy streaks. */
+    EBL_GOLD,
+
+    /** EBL Platinum: deep blue with a many-pointed star and linked points. */
+    EBL_PLATINUM,
+
+    /** EBL Signature: black with rows of turquoise dots curving into the distance. */
+    EBL_SIGNATURE,
+
+    /** EBL Titanium: black with crossing bands of brushed metal. */
+    EBL_TITANIUM,
+
+    /** EBL World: space, with the Earth's golden edge and city lights. */
+    EBL_WORLD,
+
+    /** EBL World Elite: carbon fibre. */
+    EBL_WORLD_ELITE,
+
+    /** EBL Diners: black with a broad orange and yellow brush stroke. */
+    EBL_DINERS,
+
+    /** EBL UnionPay: brushed silver with yellow, green and blue sweeps. */
+    EBL_UNIONPAY,
 }
 
 /**
@@ -403,6 +430,10 @@ fun DrawScope.drawFinish(finish: Finish, accent: Color, seed: Int) {
         Finish.CITY_AMEX, Finish.CITY_ISLAMIC_GOLD, Finish.CITY_ISLAMIC_BLUE, Finish.CITY_MINERAL,
         Finish.CITY_INFINITE_WAVE, Finish.CITY_SATIN,
         -> drawCity(finish, accent, random)
+
+        Finish.EBL_CLASSIC, Finish.EBL_GOLD, Finish.EBL_PLATINUM, Finish.EBL_SIGNATURE, Finish.EBL_TITANIUM,
+        Finish.EBL_WORLD, Finish.EBL_WORLD_ELITE, Finish.EBL_DINERS, Finish.EBL_UNIONPAY,
+        -> drawEbl(finish, accent, random)
     }
 }
 
