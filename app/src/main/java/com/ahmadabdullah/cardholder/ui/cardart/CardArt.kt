@@ -153,6 +153,24 @@ enum class Finish {
 
     /** EBL UnionPay: brushed silver with yellow, green and blue sweeps. */
     EBL_UNIONPAY,
+
+    /** Prime World: black with a great blue planet rising from the left. */
+    PRIME_WORLD,
+
+    /** Prime Mastercard Platinum: black facets meeting at a point, with a gold sliver. */
+    PRIME_FACETS,
+
+    /** Prime Visa Platinum: black above, leather below, divided by a wave of metal. */
+    PRIME_LEATHER,
+
+    /** Prime Visa Gold: champagne white with a mottled gold field behind an arc. */
+    PRIME_GOLD_ARC,
+
+    /** Prime JCB Platinum: deep navy with curling blue smoke. */
+    PRIME_SMOKE,
+
+    /** Prime JCB Gold: yellow gold with soft rounded tiles on the right. */
+    PRIME_TILES,
 }
 
 /**
@@ -434,6 +452,10 @@ fun DrawScope.drawFinish(finish: Finish, accent: Color, seed: Int) {
         Finish.EBL_CLASSIC, Finish.EBL_GOLD, Finish.EBL_PLATINUM, Finish.EBL_SIGNATURE, Finish.EBL_TITANIUM,
         Finish.EBL_WORLD, Finish.EBL_WORLD_ELITE, Finish.EBL_DINERS, Finish.EBL_UNIONPAY,
         -> drawEbl(finish, accent, random)
+
+        Finish.PRIME_WORLD, Finish.PRIME_FACETS, Finish.PRIME_LEATHER, Finish.PRIME_GOLD_ARC, Finish.PRIME_SMOKE,
+        Finish.PRIME_TILES,
+        -> drawPrime(finish, accent, random)
     }
 }
 

@@ -25,6 +25,12 @@ import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRUSHED
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.CARBON
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.CITY_AMEX
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.EBL_CLASSIC
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.PRIME_WORLD
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.PRIME_FACETS
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.PRIME_LEATHER
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.PRIME_GOLD_ARC
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.PRIME_SMOKE
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.PRIME_TILES
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.EBL_GOLD
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.EBL_PLATINUM
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.EBL_SIGNATURE
@@ -198,13 +204,14 @@ object CardDesigns {
         put("one", VISA, "Signature", d(0xFF2A2826, 0xFF0A0A0A, RIBBON, 0xFFE0A74E))
 
         // Prime Bank
-        put("prime", VISA, "Gold", d(0xFFFBF4E4, 0xFFE7CF95, SILK, 0xFFD9B25A, darkText = true))
-        put("prime", VISA, "Platinum", d(0xFF1C1B1A, 0xFF050505, RIBBON, 0xFFC9A24B))
+        put("prime", VISA, "Gold", d(0xFFFDFBF6, 0xFFEFE8D8, PRIME_GOLD_ARC, 0xFFE2B85A, darkText = true))
+        put("prime", VISA, "Platinum", d(0xFF1A1A1A, 0xFF050505, PRIME_LEATHER, 0xFFC9A24B))
+        // No reference picture for Signature yet, so it keeps its earlier look.
         put("prime", VISA, "Signature", d(0xFF141414, 0xFF000000, RIBBON, 0xFF8F8F8F))
-        put("prime", MASTERCARD, "Platinum", d(0xFF141414, 0xFF000000, CHEVRON, 0xFFC9A24B))
-        put("prime", MASTERCARD, "World", d(0xFF0A0A0A, 0xFF000000, GLOBE, 0xFF2EA7E0))
-        put("prime", JCB, "Gold", d(0xFFF4CB48, 0xFFD99A1E, BLOBS, darkText = true))
-        put("prime", JCB, "Platinum", d(0xFF0B1A2E, 0xFF02060E, SILK, 0xFF6FA0D0))
+        put("prime", MASTERCARD, "Platinum", d(0xFF161616, 0xFF050505, PRIME_FACETS, 0xFFC9A24B))
+        put("prime", MASTERCARD, "World", d(0xFF0A0A0B, 0xFF000000, PRIME_WORLD, 0xFF47C0F0))
+        put("prime", JCB, "Gold", d(0xFFF7C93A, 0xFFE8A417, PRIME_TILES, 0xFFFFE27A, darkText = true))
+        put("prime", JCB, "Platinum", d(0xFF0B1A2E, 0xFF02060E, PRIME_SMOKE, 0xFF6FB0F0))
 
         // Pubali Bank
         put("pubali", VISA, "Classic", d(0xFF167A4A, 0xFF0B3F27, FACETS, 0xFF4BD08C))
