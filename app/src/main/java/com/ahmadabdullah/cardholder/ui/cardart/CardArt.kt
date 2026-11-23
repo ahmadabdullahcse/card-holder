@@ -267,6 +267,18 @@ enum class Finish {
 
     /** LankaBangla Visa: wide curved bands from the top left, each a step lighter. */
     LB_ARCS,
+
+    /** ONE Signature: black with corner mandala lines and gold light trails. */
+    ONE_TRAILS,
+
+    /** ONE Platinum: silver ribbed metal bending in a wave. */
+    ONE_RIBS,
+
+    /** ONE Gold: dark with flowing golden wisps and sparkles. */
+    ONE_GOLD_STREAKS,
+
+    /** ONE Classic: pale silver engraved with large flowers. */
+    ONE_PEONIES,
 }
 
 /**
@@ -578,6 +590,8 @@ fun DrawScope.drawFinish(finish: Finish, accent: Color, seed: Int) {
         -> drawIslami(finish, accent, random)
 
         Finish.LB_WAVES, Finish.LB_ARCS -> drawLankaBangla(finish, accent)
+
+        Finish.ONE_TRAILS, Finish.ONE_RIBS, Finish.ONE_GOLD_STREAKS, Finish.ONE_PEONIES -> drawOne(finish, accent, random)
     }
 }
 

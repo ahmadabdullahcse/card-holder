@@ -55,6 +55,10 @@ import com.ahmadabdullah.cardholder.ui.cardart.Finish.FACETS
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.GLOBE
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.GUILLOCHE
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MARBLE
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.ONE_TRAILS
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.ONE_RIBS
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.ONE_GOLD_STREAKS
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.ONE_PEONIES
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.PANEL
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.PLAIN
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_DIAMOND
@@ -234,10 +238,10 @@ object CardDesigns {
         put("ncc", MASTERCARD, "Titanium", d(0xFF3A3B3E, 0xFF141416, BRUSHED))
 
         // ONE Bank: streaks of golden light on black.
-        put("one", VISA, "Classic", d(0xFFF2F2F1, 0xFFCFCFCE, ROSETTE, 0xFFFFFFFF, darkText = true))
-        put("one", VISA, "Gold", d(0xFF2A2410, 0xFF050505, RIBBON, 0xFFE6B83A))
-        put("one", VISA, "Platinum", d(0xFF8E8E8E, 0xFF2E2E2E, SILK))
-        put("one", VISA, "Signature", d(0xFF2A2826, 0xFF0A0A0A, RIBBON, 0xFFE0A74E))
+        put("one", VISA, "Classic", d(0xFFE6E7E9, 0xFFCDCFD2, ONE_PEONIES, darkText = true))
+        put("one", VISA, "Gold", d(0xFF2A2612, 0xFF0A0C10, ONE_GOLD_STREAKS, 0xFFF2C420))
+        put("one", VISA, "Platinum", d(0xFF8A8A8E, 0xFF2A2A2C, ONE_RIBS))
+        put("one", VISA, "Signature", d(0xFF1C1B1A, 0xFF060606, ONE_TRAILS, 0xFFE0A050))
 
         // Prime Bank
         put("prime", VISA, "Gold", d(0xFFFDFBF6, 0xFFEFE8D8, PRIME_GOLD_ARC, 0xFFE2B85A, darkText = true))
