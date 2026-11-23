@@ -171,6 +171,30 @@ enum class Finish {
 
     /** Prime JCB Gold: yellow gold with soft rounded tiles on the right. */
     PRIME_TILES,
+
+    /** MTB UnionPay Diamond: dark glass facets of blue, burgundy and violet. */
+    MTB_DIAMOND,
+
+    /** MTB Classic: deep green with a honeycomb of small rings. */
+    MTB_RINGS,
+
+    /** MTB Gold: black with chevrons pointing right, the last in glittering gold. */
+    MTB_CHEVRONS,
+
+    /** MTB Titanium: pale silver with a fine lattice of diamonds and rings. */
+    MTB_LATTICE,
+
+    /** MTB World: black with a dotted globe on the right. */
+    MTB_GLOBE,
+
+    /** MTB Visa Platinum: white with a honeycomb behind a silver arrow. */
+    MTB_HONEYCOMB,
+
+    /** MTB Visa Signature: black with long fine arcs. */
+    MTB_ARCS,
+
+    /** MTB UnionPay Platinum: navy with a web of linked points. */
+    MTB_NETWORK,
 }
 
 /**
@@ -456,6 +480,10 @@ fun DrawScope.drawFinish(finish: Finish, accent: Color, seed: Int) {
         Finish.PRIME_WORLD, Finish.PRIME_FACETS, Finish.PRIME_LEATHER, Finish.PRIME_GOLD_ARC, Finish.PRIME_SMOKE,
         Finish.PRIME_TILES,
         -> drawPrime(finish, accent, random)
+
+        Finish.MTB_DIAMOND, Finish.MTB_RINGS, Finish.MTB_CHEVRONS, Finish.MTB_LATTICE, Finish.MTB_GLOBE,
+        Finish.MTB_HONEYCOMB, Finish.MTB_ARCS, Finish.MTB_NETWORK,
+        -> drawMtb(finish, accent, random)
     }
 }
 

@@ -53,6 +53,14 @@ import com.ahmadabdullah.cardholder.ui.cardart.Finish.GUILLOCHE
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MARBLE
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.PANEL
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.PLAIN
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_DIAMOND
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_RINGS
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_CHEVRONS
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_LATTICE
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_GLOBE
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_HONEYCOMB
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_ARCS
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_NETWORK
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.RAYS
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.RIBBON
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.ROSETTE
@@ -181,14 +189,14 @@ object CardDesigns {
         put("mercantile", MASTERCARD, "World", d(0xFF121A33, 0xFF03060E, GLOBE, 0xFF4F9BFF))
 
         // Mutual Trust Bank
-        putAll("mtb", both, "Classic", d(0xFF2E6452, 0xFF0E3B2C, GUILLOCHE))
-        putAll("mtb", both, "Gold", d(0xFF2A2724, 0xFF0E0D0B, CHEVRON, 0xFFC9A24B))
-        put("mtb", VISA, "Platinum", d(0xFFF4F5F9, 0xFFC9C9D3, CHEVRON, 0xFF9A9AA5, darkText = true))
-        put("mtb", VISA, "Signature", d(0xFF1E1E1E, 0xFF000000, RIBBON, 0xFF6E6E6E))
-        put("mtb", MASTERCARD, "Titanium", d(0xFFECEEEE, 0xFFC9CDCD, GUILLOCHE, 0xFF9AA0A0, darkText = true))
-        put("mtb", MASTERCARD, "World", d(0xFF2B2B2B, 0xFF000000, GLOBE, 0xFF9FB7C6))
-        put("mtb", UNIONPAY, "Platinum", d(0xFF0D3A5E, 0xFF001730, FACETS, 0xFF8FB3D9))
-        put("mtb", UNIONPAY, "Diamond", d(0xFF714759, 0xFF252037, FACETS, 0xFFC697AA))
+        putAll("mtb", both, "Classic", d(0xFF24684F, 0xFF0D3B2B, MTB_RINGS, 0xFFBFEBD6))
+        putAll("mtb", both, "Gold", d(0xFF1C1C1D, 0xFF050505, MTB_CHEVRONS, 0xFFC9A24B))
+        put("mtb", VISA, "Platinum", d(0xFFFBFBFC, 0xFFE4E5E9, MTB_HONEYCOMB, darkText = true))
+        put("mtb", VISA, "Signature", d(0xFF151515, 0xFF000000, MTB_ARCS, 0xFF9A9A9E))
+        put("mtb", MASTERCARD, "Titanium", d(0xFFF1F2F2, 0xFFC9CDCD, MTB_LATTICE, 0xFF7E8A8A, darkText = true))
+        put("mtb", MASTERCARD, "World", d(0xFF0E0E10, 0xFF000000, MTB_GLOBE, 0xFF8FC1E8))
+        put("mtb", UNIONPAY, "Platinum", d(0xFF143C6C, 0xFF061833, MTB_NETWORK, 0xFF7FB8E8))
+        put("mtb", UNIONPAY, "Diamond", d(0xFF2A2F4E, 0xFF0D1020, MTB_DIAMOND, 0xFFE8C8E0))
 
         // NCC Bank
         put("ncc", VISA, "Classic", d(0xFFFAFAFA, 0xFFC6C6C6, BRUSHED, darkText = true))
