@@ -72,6 +72,8 @@ import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_LATTICE
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_GLOBE
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_HONEYCOMB
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.ISLAMI_GLOBE_STAND
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.IFIC_GOLD_CHEVRONS
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.IFIC_SATIN_CHEVRON
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.ISLAMI_CRESCENT
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.ISLAMI_FAN
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.ISLAMI_GRAPHITE
@@ -188,8 +190,8 @@ object CardDesigns {
         put("ebl", UNIONPAY, "Platinum", d(0xFFF2F2F3, 0xFFC4C6C9, EBL_UNIONPAY, darkText = true))
 
         // IFIC Bank
-        put("ific", VISA, "Gold", d(0xFFF0C34A, 0xFFD19A22, CHEVRON, darkText = true))
-        put("ific", VISA, "Platinum", d(0xFF4A4C50, 0xFF1F2023, RIBBON, 0xFFD0D0D0))
+        put("ific", VISA, "Gold", d(0xFFEDBE48, 0xFFDDAA3A, IFIC_GOLD_CHEVRONS, 0xFFC08A1E, darkText = true))
+        put("ific", VISA, "Platinum", d(0xFF2A2A2C, 0xFF0C0C0D, IFIC_SATIN_CHEVRON, 0xFFE0E0E4))
 
         // Islami Bank. Platinum comes as the standard graphite card or the blue Priority card;
         // older cards saved before editions existed get the standard one.

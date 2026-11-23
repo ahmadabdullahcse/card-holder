@@ -291,6 +291,12 @@ enum class Finish {
 
     /** NCC Signature: black and charcoal with a huge gold mandala. */
     NCC_MANDALA,
+
+    /** IFIC Gold: golden yellow with broad rounded chevrons. */
+    IFIC_GOLD_CHEVRONS,
+
+    /** IFIC Platinum: charcoal satin folds with a translucent chevron. */
+    IFIC_SATIN_CHEVRON,
 }
 
 /**
@@ -606,6 +612,8 @@ fun DrawScope.drawFinish(finish: Finish, accent: Color, seed: Int) {
         Finish.ONE_TRAILS, Finish.ONE_RIBS, Finish.ONE_GOLD_STREAKS, Finish.ONE_PEONIES -> drawOne(finish, accent, random)
 
         Finish.NCC_SILVER_SWEEP, Finish.NCC_DUAL_GOLD, Finish.NCC_BRUSHED, Finish.NCC_MANDALA -> drawNcc(finish, accent, random)
+
+        Finish.IFIC_GOLD_CHEVRONS, Finish.IFIC_SATIN_CHEVRON -> drawIfic(finish, accent)
     }
 }
 
