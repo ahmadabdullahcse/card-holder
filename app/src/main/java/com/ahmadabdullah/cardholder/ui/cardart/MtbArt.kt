@@ -10,10 +10,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.translate
-import kotlin.math.asin
-import kotlin.math.atan2
 import kotlin.math.cos
-import kotlin.math.floor
 import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.random.Random
@@ -160,7 +157,7 @@ internal fun DrawScope.drawMtb(finish: Finish, accent: Color, random: Random) {
                     val u = (x - center.x) / radius
                     val v = (y - center.y) / radius
                     val r2 = u * u + v * v
-                    if (r2 < 1f && isLand(u, v, sqrt(1f - r2))) {
+                    if (r2 < 1f && WorldMap.onGlobe(u, v, sqrt(1f - r2))) {
                         val lit = ((u - v) * 0.4f + 0.55f) * sqrt(1f - r2)
                         val band = (lit * 3f).toInt().coerceIn(0, 2)
                         val dot = line * (0.45f + band * 0.3f)
@@ -264,53 +261,4 @@ internal fun DrawScope.drawMtb(finish: Finish, accent: Color, random: Random) {
 
         else -> Unit
     }
-}
-
-/**
- * A rough map of the world's land, one character per 10 degrees: rows run from the north pole
- * south, columns from 180°W east. Coarse on purpose; it is smoothed when read.
- */
-private val worldMap = listOf(
-    "....................................",
-    "......######.###...#.....#####......",
-    ".#########.#.###...################.",
-    ".....########....#####.############.",
-    ".....#######.....######.########.#..",
-    "......#####......#..########.####...",
-    ".......###......#########.#####.....",
-    "........##......#######..##.###.....",
-    "..........####...######.....###.....",
-    "..........#####.....####....#####...",
-    "...........####.....###.#......###..",
-    "...........###......###......#####..",
-    "...........##..................###.#",
-    "...........##.......................",
-    "...........#........................",
-    "....................................",
-    "####################################",
-    "####################################",
-)
-
-/**
- * Whether the point ([u], [v], [z]) on a globe facing the viewer is land. The globe is turned to
- * show the Americas and the Atlantic, tilted a little toward the viewer.
- */
-private fun isLand(u: Float, v: Float, z: Float): Boolean {
-    val tilt = Math.toRadians(20.0).toFloat()
-    // Undo the tilt about the horizontal axis, then read latitude and longitude.
-    val y = -v * cos(tilt) + z * sin(tilt)
-    val zz = v * sin(tilt) + z * cos(tilt)
-    val lat = Math.toDegrees(asin(y.coerceIn(-1f, 1f).toDouble())).toFloat()
-    val lon = Math.toDegrees(atan2(u.toDouble(), zz.toDouble())).toFloat() - 55f
-    // Smooth the coarse map by blending the four nearest cells.
-    val fx = ((lon + 180f + 360f) % 360f) / 10f - 0.5f
-    val fy = (90f - lat) / 10f - 0.5f
-    fun cell(cx: Int, cy: Int) = if (worldMap[cy.coerceIn(0, 17)][((cx % 36) + 36) % 36] == '#') 1f else 0f
-    val x0 = floor(fx).toInt()
-    val y0 = floor(fy).toInt()
-    val tx = fx - x0
-    val ty = fy - y0
-    val top = cell(x0, y0) * (1 - tx) + cell(x0 + 1, y0) * tx
-    val bottom = cell(x0, y0 + 1) * (1 - tx) + cell(x0 + 1, y0 + 1) * tx
-    return top * (1 - ty) + bottom * ty > 0.5f
 }

@@ -195,6 +195,24 @@ enum class Finish {
 
     /** MTB UnionPay Platinum: navy with a web of linked points. */
     MTB_NETWORK,
+
+    /** UCB Classic: chrome sheet metal with folds at two corners. */
+    UCB_CHROME,
+
+    /** UCB Gold: brushed gold bands round a damask middle band. */
+    UCB_DAMASK,
+
+    /** UCB Visa Platinum: a huge ornamental half rosette on black. */
+    UCB_MANDALA,
+
+    /** UCB Mastercard Platinum: the same rosette on grey carbon weave. */
+    UCB_MANDALA_CARBON,
+
+    /** UCB Signature: a big globe of fine coloured dots on deep blue. */
+    UCB_DOT_GLOBE,
+
+    /** UCB World: a grey world map on black with a gold silk ribbon. */
+    UCB_WORLD_RIBBON,
 }
 
 /**
@@ -208,8 +226,13 @@ data class CardDesign(
     val darkText: Boolean = false,
     /** Printed upright, like some premium cards: drawn tall and narrow, with its own layout. */
     val vertical: Boolean = false,
+    /** For a card light at the top and dark below: the bank name and tier get their own ink. */
+    val topDarkText: Boolean = darkText,
+    /** Whether the corner behind the network mark is light, so the mark is drawn dark. */
+    val markOnLight: Boolean = darkText,
 ) {
     val textColor: Color get() = if (darkText) Color(0xFF1E2228) else Color.White
+    val topTextColor: Color get() = if (topDarkText) Color(0xFF1E2228) else Color.White
 }
 
 /** Draws [finish] over the whole card. [seed] keeps the scattered shapes the same on every draw. */
@@ -484,6 +507,10 @@ fun DrawScope.drawFinish(finish: Finish, accent: Color, seed: Int) {
         Finish.MTB_DIAMOND, Finish.MTB_RINGS, Finish.MTB_CHEVRONS, Finish.MTB_LATTICE, Finish.MTB_GLOBE,
         Finish.MTB_HONEYCOMB, Finish.MTB_ARCS, Finish.MTB_NETWORK,
         -> drawMtb(finish, accent, random)
+
+        Finish.UCB_CHROME, Finish.UCB_DAMASK, Finish.UCB_MANDALA, Finish.UCB_MANDALA_CARBON, Finish.UCB_DOT_GLOBE,
+        Finish.UCB_WORLD_RIBBON,
+        -> drawUcb(finish, accent, random)
     }
 }
 

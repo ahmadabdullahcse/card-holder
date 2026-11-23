@@ -60,6 +60,12 @@ import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_LATTICE
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_GLOBE
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_HONEYCOMB
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_ARCS
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.UCB_CHROME
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.UCB_DAMASK
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.UCB_MANDALA
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.UCB_MANDALA_CARBON
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.UCB_DOT_GLOBE
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.UCB_WORLD_RIBBON
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_NETWORK
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.RAYS
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.RIBBON
@@ -76,7 +82,8 @@ import com.ahmadabdullah.cardholder.ui.cardart.Finish.STRIPE
 object CardDesigns {
     private fun d(
         light: Long, dark: Long, finish: Finish = PLAIN, accent: Long = 0xFFFFFFFF, darkText: Boolean = false, vertical: Boolean = false,
-    ) = CardDesign(listOf(Color(light), Color(dark)), finish, Color(accent), darkText, vertical)
+        topDarkText: Boolean = darkText, markOnLight: Boolean = darkText,
+    ) = CardDesign(listOf(Color(light), Color(dark)), finish, Color(accent), darkText, vertical, topDarkText, markOnLight)
 
     private val designs: Map<String, CardDesign> = buildMap {
         fun put(bank: String, network: CardNetwork, tier: String, design: CardDesign) = put(key(bank, network, tier), design)
@@ -252,12 +259,13 @@ object CardDesigns {
         put("trust", UNIONPAY, "Platinum", d(0xFF0A0A0A, 0xFF000000, DOTS, 0xFF3F78C9))
 
         // United Commercial Bank
-        putAll("ucb", both, "Classic", d(0xFFF0F0EE, 0xFF9C9C9C, BRUSHED, darkText = true))
-        putAll("ucb", both, "Gold", d(0xFFF0C65E, 0xFFB9852F, BRUSHED, darkText = true))
-        put("ucb", VISA, "Platinum", d(0xFF2D2829, 0xFF120D0F, ROSETTE, 0xFF6B6B6B))
-        put("ucb", MASTERCARD, "Platinum", d(0xFF5E6062, 0xFF3A3B3C, ROSETTE, 0xFF8A8A8A))
-        put("ucb", VISA, "Signature", d(0xFF1C5A93, 0xFF0D3D6E, DOTS, 0xFF9CC4E8))
-        put("ucb", MASTERCARD, "World", d(0xFF2A2A2A, 0xFF050505, RIBBON, 0xFFC9A24B))
+        // The chrome Classic is pale at the top and black below, so its top line is printed dark.
+        putAll("ucb", both, "Classic", d(0xFFE0E0E2, 0xFF2A2A2E, UCB_CHROME, topDarkText = true, markOnLight = true))
+        putAll("ucb", both, "Gold", d(0xFFF0C65E, 0xFFB9852F, UCB_DAMASK, darkText = true))
+        put("ucb", VISA, "Platinum", d(0xFF151416, 0xFF050505, UCB_MANDALA, 0xFF6E6E72))
+        put("ucb", MASTERCARD, "Platinum", d(0xFF4E4F52, 0xFF2C2D30, UCB_MANDALA_CARBON, 0xFF9A9A9E))
+        put("ucb", VISA, "Signature", d(0xFF164A92, 0xFF0B2B62, UCB_DOT_GLOBE))
+        put("ucb", MASTERCARD, "World", d(0xFF0E0E10, 0xFF000000, UCB_WORLD_RIBBON, 0xFFE2B85A))
     }
 
     /** A sensible look for a tier, for any card that has no design of its own. */

@@ -91,11 +91,12 @@ private fun CardFace(card: Card, design: CardDesign, modifier: Modifier, onClick
 @Composable
 private fun LandscapeLayout(card: Card, design: CardDesign) {
     val ink = design.textColor
+    val topInk = design.topTextColor
     Column(Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 18.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
                 card.bankName,
-                color = ink,
+                color = topInk,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 17.sp,
                 maxLines = 1,
@@ -103,7 +104,7 @@ private fun LandscapeLayout(card: Card, design: CardDesign) {
             )
             Text(
                 card.tier.uppercase(),
-                color = ink.copy(alpha = 0.8f),
+                color = topInk.copy(alpha = 0.8f),
                 fontSize = 12.sp,
                 letterSpacing = 1.5.sp,
                 fontWeight = FontWeight.Medium,
@@ -137,7 +138,7 @@ private fun LandscapeLayout(card: Card, design: CardDesign) {
                 maxLines = 1,
                 modifier = Modifier.weight(1f),
             )
-            NetworkMark(card.network, onLight = design.darkText)
+            NetworkMark(card.network, onLight = design.markOnLight)
         }
     }
 }
@@ -197,7 +198,7 @@ private fun UprightLayout(card: Card, design: CardDesign) {
         )
         Spacer(Modifier.height(10.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-            NetworkMark(card.network, onLight = design.darkText)
+            NetworkMark(card.network, onLight = design.markOnLight)
         }
     }
 }
