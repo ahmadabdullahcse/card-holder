@@ -65,6 +65,11 @@ import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_GLOBE
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_HONEYCOMB
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_ARCS
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.UCB_CHROME
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.TRUST_GLASS
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.TRUST_STRINGS
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.TRUST_LANTERN
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.TRUST_TUNNEL
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.TRUST_VORTEX
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.UCB_DAMASK
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.UCB_MANDALA
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.UCB_MANDALA_CARBON
@@ -256,11 +261,11 @@ object CardDesigns {
         put("scb", MASTERCARD, "Titanium", d(0xFF0E6A7E, 0xFF003F4D, PANEL, 0xFF509AAC))
 
         // Trust Bank
-        put("trust", VISA, "Classic", d(0xFF0E2A1E, 0xFF020805, GUILLOCHE, 0xFF3EAE6E))
-        put("trust", VISA, "Gold", d(0xFF3A1510, 0xFF0B0606, BLOBS, 0xFFF0A030))
-        put("trust", VISA, "Platinum", d(0xFF2E292A, 0xFF121011, RIBBON, 0xFF2E9BD6))
-        put("trust", VISA, "Signature", d(0xFF8E1A10, 0xFF5A0802, FACETS, 0xFFB73A2E))
-        put("trust", UNIONPAY, "Platinum", d(0xFF0A0A0A, 0xFF000000, DOTS, 0xFF3F78C9))
+        put("trust", VISA, "Classic", d(0xFF0C1410, 0xFF000000, TRUST_TUNNEL, 0xFF3ED67A))
+        put("trust", VISA, "Gold", d(0xFF2A1410, 0xFF0A0505, TRUST_LANTERN, 0xFFF09A20))
+        put("trust", VISA, "Platinum", d(0xFF2C2C2E, 0xFF1A1A1C, TRUST_STRINGS, 0xFF2E8FD6))
+        put("trust", VISA, "Signature", d(0xFF9E1414, 0xFF6A0808, TRUST_GLASS))
+        put("trust", UNIONPAY, "Platinum", d(0xFF080A10, 0xFF000000, TRUST_VORTEX))
 
         // United Commercial Bank
         // The chrome Classic is pale at the top and black below, so its top line is printed dark.

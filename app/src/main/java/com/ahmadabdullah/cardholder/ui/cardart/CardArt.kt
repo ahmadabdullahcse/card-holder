@@ -225,6 +225,21 @@ enum class Finish {
 
     /** DBBL Gold: pale gold with a great globe in deeper gold. */
     DBBL_GOLD_GLOBE,
+
+    /** Trust Signature: red stained glass with dark lead. */
+    TRUST_GLASS,
+
+    /** Trust Platinum: charcoal with a fan of fine blue lines pinching into a band. */
+    TRUST_STRINGS,
+
+    /** Trust Gold: night with a glowing lantern and blurred warm lights. */
+    TRUST_LANTERN,
+
+    /** Trust Classic: a tunnel of small squares round a green glow, red at the lower left. */
+    TRUST_TUNNEL,
+
+    /** Trust UnionPay Platinum: a chequered blue vortex. */
+    TRUST_VORTEX,
 }
 
 /**
@@ -526,6 +541,9 @@ fun DrawScope.drawFinish(finish: Finish, accent: Color, seed: Int) {
 
         Finish.DBBL_ARABESQUE, Finish.DBBL_DARK_DAMASK, Finish.DBBL_SILVER_DAMASK, Finish.DBBL_GOLD_GLOBE,
         -> drawDbbl(finish, accent, random)
+
+        Finish.TRUST_GLASS, Finish.TRUST_STRINGS, Finish.TRUST_LANTERN, Finish.TRUST_TUNNEL, Finish.TRUST_VORTEX,
+        -> drawTrust(finish, accent, random)
     }
 }
 
