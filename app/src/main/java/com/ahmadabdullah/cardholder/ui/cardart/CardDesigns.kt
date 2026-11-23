@@ -23,6 +23,10 @@ import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRAC_TARA
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRAC_TARA_WORLD
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.BRUSHED
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.CARBON
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.DBBL_ARABESQUE
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.DBBL_DARK_DAMASK
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.DBBL_SILVER_DAMASK
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.DBBL_GOLD_GLOBE
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.CITY_AMEX
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.EBL_CLASSIC
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.PRIME_WORLD
@@ -143,11 +147,11 @@ object CardDesigns {
         put("dhaka", MASTERCARD, "World", d(0xFF1C2A7A, 0xFF0A1036, GLOBE, 0xFF5FA8FF))
 
         // Dutch-Bangla Bank: a gold arabesque on its black cards.
-        putAll("dbbl", both, "Gold", d(0xFFEDE2A0, 0xFFCDB45A, BRUSHED, darkText = true))
-        put("dbbl", VISA, "Platinum", d(0xFFE4E4E6, 0xFFB7B8BB, ROSETTE, 0xFF8A8A8A, darkText = true))
-        put("dbbl", VISA, "Signature", d(0xFF2E292A, 0xFF141112, ROSETTE, 0xFFD4A45A))
-        put("dbbl", MASTERCARD, "Titanium", d(0xFF2A2526, 0xFF050404, SILK))
-        put("dbbl", MASTERCARD, "World", d(0xFF2E292A, 0xFF141112, ROSETTE, 0xFFD4A45A))
+        putAll("dbbl", both, "Gold", d(0xFFE3CC62, 0xFFC9AD3E, DBBL_GOLD_GLOBE, 0xFFC4A43C, darkText = true))
+        put("dbbl", VISA, "Platinum", d(0xFFF0F0F2, 0xFFC4C6CA, DBBL_SILVER_DAMASK, darkText = true))
+        put("dbbl", VISA, "Signature", d(0xFF1C1B1C, 0xFF0C0B0C, DBBL_ARABESQUE, 0xFFC9A05A))
+        put("dbbl", MASTERCARD, "Titanium", d(0xFF2A2A2C, 0xFF000000, DBBL_DARK_DAMASK))
+        put("dbbl", MASTERCARD, "World", d(0xFF1C1B1C, 0xFF0C0B0C, DBBL_ARABESQUE, 0xFFC9A05A))
 
         // Eastern Bank
         put("ebl", VISA, "Classic", d(0xFFE8E9EA, 0xFFB0B3B6, EBL_CLASSIC, 0xFFF2C400, darkText = true))

@@ -213,6 +213,18 @@ enum class Finish {
 
     /** UCB World: a grey world map on black with a gold silk ribbon. */
     UCB_WORLD_RIBBON,
+
+    /** DBBL World and Signature: black with a white arabesque panel edged in gold. */
+    DBBL_ARABESQUE,
+
+    /** DBBL Titanium: black with a faint damask and a grey sheen. */
+    DBBL_DARK_DAMASK,
+
+    /** DBBL Platinum: silver with a light damask and a faint rainbow. */
+    DBBL_SILVER_DAMASK,
+
+    /** DBBL Gold: pale gold with a great globe in deeper gold. */
+    DBBL_GOLD_GLOBE,
 }
 
 /**
@@ -511,6 +523,9 @@ fun DrawScope.drawFinish(finish: Finish, accent: Color, seed: Int) {
         Finish.UCB_CHROME, Finish.UCB_DAMASK, Finish.UCB_MANDALA, Finish.UCB_MANDALA_CARBON, Finish.UCB_DOT_GLOBE,
         Finish.UCB_WORLD_RIBBON,
         -> drawUcb(finish, accent, random)
+
+        Finish.DBBL_ARABESQUE, Finish.DBBL_DARK_DAMASK, Finish.DBBL_SILVER_DAMASK, Finish.DBBL_GOLD_GLOBE,
+        -> drawDbbl(finish, accent, random)
     }
 }
 
