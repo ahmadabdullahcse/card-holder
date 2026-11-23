@@ -279,6 +279,18 @@ enum class Finish {
 
     /** ONE Classic: pale silver engraved with large flowers. */
     ONE_PEONIES,
+
+    /** NCC Classic: light silver with soft sweeping curves. */
+    NCC_SILVER_SWEEP,
+
+    /** NCC Gold: bright gold above, bronze below, divided by a glowing line. */
+    NCC_DUAL_GOLD,
+
+    /** NCC Platinum: grey brushed metal with a diagonal sheen. */
+    NCC_BRUSHED,
+
+    /** NCC Signature: black and charcoal with a huge gold mandala. */
+    NCC_MANDALA,
 }
 
 /**
@@ -592,6 +604,8 @@ fun DrawScope.drawFinish(finish: Finish, accent: Color, seed: Int) {
         Finish.LB_WAVES, Finish.LB_ARCS -> drawLankaBangla(finish, accent)
 
         Finish.ONE_TRAILS, Finish.ONE_RIBS, Finish.ONE_GOLD_STREAKS, Finish.ONE_PEONIES -> drawOne(finish, accent, random)
+
+        Finish.NCC_SILVER_SWEEP, Finish.NCC_DUAL_GOLD, Finish.NCC_BRUSHED, Finish.NCC_MANDALA -> drawNcc(finish, accent, random)
     }
 }
 

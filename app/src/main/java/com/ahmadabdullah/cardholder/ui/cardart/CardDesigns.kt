@@ -59,6 +59,10 @@ import com.ahmadabdullah.cardholder.ui.cardart.Finish.ONE_TRAILS
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.ONE_RIBS
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.ONE_GOLD_STREAKS
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.ONE_PEONIES
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.NCC_SILVER_SWEEP
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.NCC_DUAL_GOLD
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.NCC_BRUSHED
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.NCC_MANDALA
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.PANEL
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.PLAIN
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_DIAMOND
@@ -231,10 +235,11 @@ object CardDesigns {
         put("mtb", UNIONPAY, "Diamond", d(0xFF2A2F4E, 0xFF0D1020, MTB_DIAMOND, 0xFFE8C8E0))
 
         // NCC Bank
-        put("ncc", VISA, "Classic", d(0xFFFAFAFA, 0xFFC6C6C6, BRUSHED, darkText = true))
-        put("ncc", VISA, "Gold", d(0xFFEDD261, 0xFF9A7C42, BRUSHED, darkText = true))
-        put("ncc", VISA, "Platinum", d(0xFF9C9DA0, 0xFF6E7073, BRUSHED))
-        put("ncc", VISA, "Signature", d(0xFF2E2F33, 0xFF111113, ROSETTE, 0xFFB89A70))
+        put("ncc", VISA, "Classic", d(0xFFE2E3E5, 0xFFB4B6BA, NCC_SILVER_SWEEP, darkText = true))
+        put("ncc", VISA, "Gold", d(0xFFF2D35A, 0xFFD6A82E, NCC_DUAL_GOLD, darkText = true))
+        put("ncc", VISA, "Platinum", d(0xFF8A8C90, 0xFF6A6C70, NCC_BRUSHED))
+        put("ncc", VISA, "Signature", d(0xFF121214, 0xFF060607, NCC_MANDALA, 0xFFC9A45A))
+        // No reference picture for Titanium yet, so it keeps its earlier look.
         put("ncc", MASTERCARD, "Titanium", d(0xFF3A3B3E, 0xFF141416, BRUSHED))
 
         // ONE Bank: streaks of golden light on black.
