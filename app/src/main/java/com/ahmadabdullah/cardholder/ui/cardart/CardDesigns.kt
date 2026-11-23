@@ -79,6 +79,8 @@ import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_NETWORK
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.RAYS
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.RIBBON
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.ROSETTE
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.SCB_PANEL
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.SCB_SMART
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.SILK
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.STAR
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.STRIPE
@@ -254,11 +256,15 @@ object CardDesigns {
         put("southeast", MASTERCARD, "World", d(0xFF14213D, 0xFF070C1A, RAYS, 0xFFD4A94E))
 
         // Standard Chartered: a patterned panel down the right.
+        // No reference picture for Classic yet, so it keeps its earlier look.
         put("scb", VISA, "Classic", d(0xFFE9ECEF, 0xFFB9C0C7, BRUSHED, darkText = true))
-        put("scb", VISA, "Gold", d(0xFF0A5C93, 0xFF003866, PANEL, 0xFF4C91B7))
-        put("scb", VISA, "Platinum", d(0xFFF2F5F8, 0xFFDCE6EE, RIBBON, 0xFF9BC7E8, darkText = true))
-        put("scb", VISA, "Signature", d(0xFF0A5C93, 0xFF00396B, PANEL, 0xFF5793B8))
-        put("scb", MASTERCARD, "Titanium", d(0xFF0E6A7E, 0xFF003F4D, PANEL, 0xFF509AAC))
+        put("scb", VISA, "Gold", d(0xFF0E56AE, 0xFF0A4590, SCB_PANEL, 0xFF7FB4F0))
+        // Older cards saved before editions existed get the Smart look.
+        put("scb", VISA, "Platinum", d(0xFFF8F9FB, 0xFFE6E9EE, SCB_SMART, 0xFF9AA0AA, darkText = true))
+        putVariant("scb", VISA, "Platinum", "Smart", d(0xFFF8F9FB, 0xFFE6E9EE, SCB_SMART, 0xFF9AA0AA, darkText = true))
+        putVariant("scb", VISA, "Platinum", "Saadiq", d(0xFF4C4C50, 0xFF2A2A2E, SCB_PANEL, 0xFFB4B4B8))
+        put("scb", VISA, "Signature", d(0xFF0B4C9C, 0xFF083A80, SCB_PANEL, 0xFF6FA6E8))
+        put("scb", MASTERCARD, "Titanium", d(0xFF0D5C66, 0xFF0A4A55, SCB_PANEL, 0xFF4FC0C8))
 
         // Trust Bank
         put("trust", VISA, "Classic", d(0xFF0C1410, 0xFF000000, TRUST_TUNNEL, 0xFF3ED67A))
@@ -305,6 +311,7 @@ object CardDesigns {
         key("brac", MASTERCARD, "World") to listOf("Standard", "Tara"),
         key("city", AMEX, "Gold") to listOf("Standard", "Islamic"),
         key("city", AMEX, "Blue") to listOf("Standard", "Islamic"),
+        key("scb", VISA, "Platinum") to listOf("Smart", "Saadiq"),
     )
 
     fun variantsFor(bankId: String, network: CardNetwork, tier: String): List<String> = variants[key(bankId, network, tier)].orEmpty()

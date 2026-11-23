@@ -240,6 +240,12 @@ enum class Finish {
 
     /** Trust UnionPay Platinum: a chequered blue vortex. */
     TRUST_VORTEX,
+
+    /** Standard Chartered: geometric linework with a stronger panel on the right. */
+    SCB_PANEL,
+
+    /** Standard Chartered Smart: white with a soft rainbow and a panel of pale circles. */
+    SCB_SMART,
 }
 
 /**
@@ -544,6 +550,8 @@ fun DrawScope.drawFinish(finish: Finish, accent: Color, seed: Int) {
 
         Finish.TRUST_GLASS, Finish.TRUST_STRINGS, Finish.TRUST_LANTERN, Finish.TRUST_TUNNEL, Finish.TRUST_VORTEX,
         -> drawTrust(finish, accent, random)
+
+        Finish.SCB_PANEL, Finish.SCB_SMART -> drawScb(finish, accent, random)
     }
 }
 
