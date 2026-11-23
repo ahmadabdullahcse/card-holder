@@ -68,6 +68,8 @@ import com.ahmadabdullah.cardholder.ui.cardart.Finish.ISLAMI_CRESCENT
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.ISLAMI_FAN
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.ISLAMI_GRAPHITE
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.ISLAMI_GOLD
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.LB_WAVES
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.LB_ARCS
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_ARCS
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.UCB_CHROME
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.TRUST_GLASS
@@ -199,12 +201,12 @@ object CardDesigns {
         put("jamuna", VISA, "Signature", d(0xFF2A3FA0, 0xFF142060, ROSETTE))
 
         // LankaBangla Finance: bright flat colors with soft rounded shapes.
-        put("lankabangla", VISA, "Classic", d(0xFFF67F65, 0xFFE8202F, BLOBS))
-        put("lankabangla", VISA, "Gold", d(0xFFFEEAEA, 0xFFF8C9BE, BLOBS, darkText = true))
-        put("lankabangla", VISA, "Platinum", d(0xFF3A98A6, 0xFF0E6E78, BLOBS))
-        put("lankabangla", MASTERCARD, "Classic", d(0xFFF89A88, 0xFFF0303A, BLOBS))
-        put("lankabangla", MASTERCARD, "Gold", d(0xFFFBB782, 0xFFF15A22, BLOBS))
-        put("lankabangla", MASTERCARD, "Titanium", d(0xFF6FD3DD, 0xFF00A79D, BLOBS))
+        put("lankabangla", VISA, "Classic", d(0xFFE8202F, 0xFFE01E2C, LB_ARCS, 0xFFE8202F))
+        put("lankabangla", VISA, "Gold", d(0xFFF7C4B8, 0xFFF4BBAE, LB_ARCS, 0xFFF6C0B3, darkText = true))
+        put("lankabangla", VISA, "Platinum", d(0xFF0E6B75, 0xFF0B5F68, LB_ARCS, 0xFF0E6B75))
+        put("lankabangla", MASTERCARD, "Classic", d(0xFFE8202F, 0xFFE01E2C, LB_WAVES, 0xFFE8202F))
+        put("lankabangla", MASTERCARD, "Gold", d(0xFFEF5A22, 0xFFE9521C, LB_WAVES, 0xFFEF5A22))
+        put("lankabangla", MASTERCARD, "Titanium", d(0xFF00A79D, 0xFF009C92, LB_WAVES, 0xFF00A79D))
 
         // Mercantile Bank
         put("mercantile", VISA, "Classic", d(0xFF1F9AA8, 0xFF0D5E6A, FACETS))

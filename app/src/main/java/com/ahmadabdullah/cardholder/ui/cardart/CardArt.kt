@@ -261,6 +261,12 @@ enum class Finish {
 
     /** Islami Gold: rich gold with a dark green leaf rosette. */
     ISLAMI_GOLD,
+
+    /** LankaBangla Mastercard: soft wavy layers of one colour, lightest at the top right. */
+    LB_WAVES,
+
+    /** LankaBangla Visa: wide curved bands from the top left, each a step lighter. */
+    LB_ARCS,
 }
 
 /**
@@ -570,6 +576,8 @@ fun DrawScope.drawFinish(finish: Finish, accent: Color, seed: Int) {
 
         Finish.ISLAMI_GLOBE_STAND, Finish.ISLAMI_CRESCENT, Finish.ISLAMI_FAN, Finish.ISLAMI_GRAPHITE, Finish.ISLAMI_GOLD,
         -> drawIslami(finish, accent, random)
+
+        Finish.LB_WAVES, Finish.LB_ARCS -> drawLankaBangla(finish, accent)
     }
 }
 
