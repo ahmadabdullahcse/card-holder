@@ -63,6 +63,11 @@ import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_CHEVRONS
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_LATTICE
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_GLOBE
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_HONEYCOMB
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.ISLAMI_GLOBE_STAND
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.ISLAMI_CRESCENT
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.ISLAMI_FAN
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.ISLAMI_GRAPHITE
+import com.ahmadabdullah.cardholder.ui.cardart.Finish.ISLAMI_GOLD
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.MTB_ARCS
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.UCB_CHROME
 import com.ahmadabdullah.cardholder.ui.cardart.Finish.TRUST_GLASS
@@ -176,13 +181,16 @@ object CardDesigns {
         put("ific", VISA, "Gold", d(0xFFF0C34A, 0xFFD19A22, CHEVRON, darkText = true))
         put("ific", VISA, "Platinum", d(0xFF4A4C50, 0xFF1F2023, RIBBON, 0xFFD0D0D0))
 
-        // Islami Bank: the Khidmah cards carry an eight-pointed star.
+        // Islami Bank. Platinum comes as the standard graphite card or the blue Priority card;
+        // older cards saved before editions existed get the standard one.
         listOf(VISA, MASTERCARD, UNIONPAY).forEach {
-            put("islami", it, "Gold", d(0xFFF1C21B, 0xFFC8890E, STAR, 0xFF1F5E2C, darkText = true))
-            put("islami", it, "Platinum", d(0xFF4A4B4D, 0xFF1E1F21, STAR, 0xFFB8963E))
+            put("islami", it, "Gold", d(0xFFF0B820, 0xFFC8890E, ISLAMI_GOLD, 0xFF1F5E2C, darkText = true))
+            put("islami", it, "Platinum", d(0xFF4A4B4E, 0xFF161618, ISLAMI_GRAPHITE, 0xFFA89870))
+            putVariant("islami", it, "Platinum", "Standard", d(0xFF4A4B4E, 0xFF161618, ISLAMI_GRAPHITE, 0xFFA89870))
+            putVariant("islami", it, "Platinum", "Priority", d(0xFF6E9CE0, 0xFF2A5CBC, ISLAMI_FAN, darkText = true, markOnLight = false))
         }
-        put("islami", VISA, "Signature", d(0xFF2B3466, 0xFF141A3B, GLOBE, 0xFFD5A762))
-        put("islami", MASTERCARD, "World", d(0xFF1F8A5E, 0xFF0E4A3A, GLOBE, 0xFF9AD1E6))
+        put("islami", VISA, "Signature", d(0xFF232C6E, 0xFF161C50, ISLAMI_CRESCENT, 0xFFD9A860))
+        put("islami", MASTERCARD, "World", d(0xFF1E6E6A, 0xFF1A8A50, ISLAMI_GLOBE_STAND))
 
         // Jamuna Bank
         put("jamuna", VISA, "Classic", d(0xFFF2F2F2, 0xFFBDBDBD, BRUSHED, darkText = true))
@@ -312,6 +320,9 @@ object CardDesigns {
         key("city", AMEX, "Gold") to listOf("Standard", "Islamic"),
         key("city", AMEX, "Blue") to listOf("Standard", "Islamic"),
         key("scb", VISA, "Platinum") to listOf("Smart", "Saadiq"),
+        key("islami", VISA, "Platinum") to listOf("Standard", "Priority"),
+        key("islami", MASTERCARD, "Platinum") to listOf("Standard", "Priority"),
+        key("islami", UNIONPAY, "Platinum") to listOf("Standard", "Priority"),
     )
 
     fun variantsFor(bankId: String, network: CardNetwork, tier: String): List<String> = variants[key(bankId, network, tier)].orEmpty()

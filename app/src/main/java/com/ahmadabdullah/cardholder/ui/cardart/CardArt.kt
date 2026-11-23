@@ -246,6 +246,21 @@ enum class Finish {
 
     /** Standard Chartered Smart: white with a soft rainbow and a panel of pale circles. */
     SCB_SMART,
+
+    /** Islami World: green with a hand-drawn globe on a curved stand. */
+    ISLAMI_GLOBE_STAND,
+
+    /** Islami Signature: navy with a corner rosette and a gold crescent ring. */
+    ISLAMI_CRESCENT,
+
+    /** Islami Priority Platinum: white top, then a blue fan of long diamonds. */
+    ISLAMI_FAN,
+
+    /** Islami Platinum: graphite with a khaki leaf rosette and gold lines. */
+    ISLAMI_GRAPHITE,
+
+    /** Islami Gold: rich gold with a dark green leaf rosette. */
+    ISLAMI_GOLD,
 }
 
 /**
@@ -552,6 +567,9 @@ fun DrawScope.drawFinish(finish: Finish, accent: Color, seed: Int) {
         -> drawTrust(finish, accent, random)
 
         Finish.SCB_PANEL, Finish.SCB_SMART -> drawScb(finish, accent, random)
+
+        Finish.ISLAMI_GLOBE_STAND, Finish.ISLAMI_CRESCENT, Finish.ISLAMI_FAN, Finish.ISLAMI_GRAPHITE, Finish.ISLAMI_GOLD,
+        -> drawIslami(finish, accent, random)
     }
 }
 
